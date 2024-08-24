@@ -1,0 +1,94 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150vh;
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #f0f0f0;
+}
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 0;
+    color: #007bff;
+    font-size: 2rem;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+/* Estilos para la tabla de clientes */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #e2e2e2;
+}
+
+/* Estilos para el botón "Ver Ventas" */
+.btn-ver-ventas {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 2px;
+    color: #fff;
+    background-color: #5bc0de;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.btn-ver-ventas:hover {
+    background-color: #31b0d5;
+}
+
+/* Estilos para el botón "Regresar al Menú" */
+.btn-regresar {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 20px auto;
+    color: #fff;
+    background-color: #5bc0de;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.btn-regresar:hover {
+    background-color: #31b0d5;
+}

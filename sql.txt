@@ -1,0 +1,109 @@
+CREATE TABLE Cliente (
+    ID_Cliente VARCHAR(36) PRIMARY KEY,
+    Nombre_Cliente VARCHAR(100) NOT NULL,
+    Apellido_Cliente VARCHAR(100) NOT NULL,
+    DNI_Cliente VARCHAR(20) NOT NULL,
+    Telefono_Cliente VARCHAR(20) NOT NULL,
+    Email VARCHAR(100),
+    Direccion TEXT,
+    Estado VARCHAR(20) DEFAULT 'Activo'
+);
+
+CREATE TABLE Empleado (
+    ID_Empleado VARCHAR(36) PRIMARY KEY,
+    Nombres_Empleado VARCHAR(100) NOT NULL,
+    Apellidos_Empleado VARCHAR(100) NOT NULL,
+    Telefono_Empleado VARCHAR(20) NOT NULL,
+    DNI_Empleado VARCHAR(20) NOT NULL,
+    Contraseña VARCHAR(255) NOT NULL,
+    Email VARCHAR(100),
+    Direccion TEXT,
+    Estado VARCHAR(20) DEFAULT 'Activo',
+    Rol VARCHAR(20) NOT NULL DEFAULT 'Normal' -- Agregado para diferenciar roles
+);
+
+CREATE TABLE Marca (
+    ID_Marca VARCHAR(36) PRIMARY KEY,
+    Nombre_Marca VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Producto (
+    ID_Producto VARCHAR(36) PRIMARY KEY,
+    Precio_Venta DECIMAL(10,2) NOT NULL,
+    Nombre_Producto VARCHAR(100) NOT NULL,
+    Descripcion TEXT NOT NULL,
+    Estado VARCHAR(20) NOT NULL,
+    Stock INT NOT NULL,
+    Tipo VARCHAR(50) NOT NULL,
+    ID_Marca VARCHAR(36),
+    FOREIGN KEY (ID_Marca) REFERENCES Marca(ID_Marca)
+);
+
+CREATE TABLE Proveedor (
+    ID_Proveedor VARCHAR(36) PRIMARY KEY,
+    Nombre_Proveedor VARCHAR(100) NOT NULL,
+    Apellido_Proveedor VARCHAR(100) NOT NULL,
+    Telefono_Proveedor VARCHAR(20) NOT NULL,
+    RUC VARCHAR(20) NOT NULL,
+    Email VARCHAR(100),
+    Direccion TEXT,
+    Estado VARCHAR(20) DEFAULT 'Activo'
+);
+
+CREATE TABLE Venta (
+    ID_Venta VARCHAR(36) PRIMARY KEY,
+    ID_Cliente VARCHAR(36) NOT NULL,
+    ID_Empleado VARCHAR(36) NOT NULL,
+    Fecha DATE NOT NULL,
+    Estado VARCHAR(20) DEFAULT 'Pendiente',
+    FOREIGN KEY (ID_Cliente) REFERENCES Cliente(ID_Cliente),
+    FOREIGN KEY (ID_Empleado) REFERENCES Empleado(ID_Empleado)
+);
+
+CREATE TABLE Detalle_Venta (
+    ID_Detalle_Venta VARCHAR(36) PRIMARY KEY,
+    ID_Producto VARCHAR(36) NOT NULL,
+    ID_Venta VARCHAR(36) NOT NULL,
+    Cantidad_Venta INT NOT NULL,
+    FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto),
+    FOREIGN KEY (ID_Venta) REFERENCES Venta(ID_Venta)
+);
+
+CREATE TABLE Pedido (
+    ID_Pedido VARCHAR(36) PRIMARY KEY,
+    ID_Empleado VARCHAR(36) NOT NULL,
+    ID_Proveedor VARCHAR(36) NOT NULL,
+    Fecha DATE NOT NULL,
+    Estado VARCHAR(20) DEFAULT 'Pendiente',
+    FOREIGN KEY (ID_Empleado) REFERENCES Empleado(ID_Empleado),
+    FOREIGN KEY (ID_Proveedor) REFERENCES Proveedor(ID_Proveedor)
+);
+
+CREATE TABLE Detalle_Pedido (
+    ID_Detalle_Pedido VARCHAR(36) PRIMARY KEY,
+    ID_Producto VARCHAR(36) NOT NULL,
+    ID_Pedido VARCHAR(36) NOT NULL,
+    Cantidad_Pedido INT NOT NULL,
+    FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto),
+    FOREIGN KEY (ID_Pedido) REFERENCES Pedido(ID_Pedido)
+);
+
+CREATE TABLE Carrito (
+    ID_Carrito VARCHAR(36) PRIMARY KEY,
+    ID_Cliente VARCHAR(36),
+    ID_Empleado VARCHAR(36),
+    Fecha_Creacion DATETIME NOT NULL,
+    FOREIGN KEY (ID_Cliente) REFERENCES Cliente(ID_Cliente),
+    FOREIGN KEY (ID_Empleado) REFERENCES Empleado(ID_Empleado)
+);
+
+CREATE TABLE Detalle_Carrito (
+    ID_Detalle_Carrito VARCHAR(36) PRIMARY KEY,
+    ID_Carrito VARCHAR(36) NOT NULL,
+    ID_Producto VARCHAR(36) NOT NULL,
+    Cantidad INT NOT NULL,
+    FOREIGN KEY (ID_Carrito) REFERENCES Carrito(ID_Carrito),
+    FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto)
+);
+
+

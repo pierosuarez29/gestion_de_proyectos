@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú - Agrícola Díaz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+</head>
+<body>
+    <div class="contenedor">
+        <div class="perfil">
+            <img src="{{ url_for('static', filename='imagenes/icono_usuario.png') }}" class="icono-usuario" alt="Icono de usuario">
+            <p>Bienvenido {{nombre}} {{apellido}}</p>
+            <button id="cerrar-sesion" onclick="cerrarSesion()">Cerrar sesión</button>
+        </div>
+        <div class="menu">
+            <h2>Menú</h2>
+            <div class="opciones">
+                <div class="opciones-sub-contendor">
+                    <div class="opcion">
+                        <a href="{{ url_for('ver_productos') }}">
+                            <img src="{{ url_for('static', filename='imagenes/registrar_compra.png') }}" alt="Ver productos">
+                            <p>Ver productos</p>
+                        </a>
+                    </div>
+                    <div class="opcion">
+                        <a href="{{ url_for('ver_clientes') }}">
+                            <img src="{{ url_for('static', filename='imagenes/generar_orden.png') }}" alt="Ver Clientes">
+                            <p>Ver Clientes</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="opciones-sub-contendor">
+                    <div class="opcion">
+                        <a href="{{ url_for('ver_proveedores') }}">
+                            <img src="{{ url_for('static', filename='imagenes/registrar_clientes.png') }}" alt="Ver Proveedores">
+                            <p>Ver Proveedores</p>
+                        </a>
+                    </div>
+                    <div class="opcion">
+                        <a href="{{ url_for('ver_empleados') }}">
+                            <img src="{{ url_for('static', filename='imagenes/registrar_clientes.png') }}" alt="Ver Empleados">
+                            <p>Ver Empleados</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function cerrarSesion() {
+            window.location.href = "{{ url_for('index') }}";  // Cambiar a la ruta de cierre de sesión si tienes una
+        }
+    </script>
+</body>
+</html>

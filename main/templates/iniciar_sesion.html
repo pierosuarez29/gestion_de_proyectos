@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escuela Profesional de Informática UNT</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/iniciar_sesion.css') }}">
+    <style>
+        /* Estilo básico para los mensajes flash */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            color: red; /* Cambia el color según tu preferencia */
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>AGRÍCOLA DÍAZ</h1>
+        <div class="ventana-inicio-sesion">
+            <img src="{{ url_for('static', filename='imagenes/icono_usuario.png') }}" class="icono-usuario" alt="Icono de usuario">
+            <form method="POST" action="{{ url_for('iniciar_sesion') }}">
+                <div class="campo">
+                    <label for="usuario">Usuario</label>
+                    <input type="text" id="usuario" name="usuario" required>
+                </div>
+                <div class="campo">
+                    <label for="contrasena">Contraseña</label>
+                    <input type="password" id="contrasena" name="password" required>
+                </div>
+                <button type="submit">Iniciar sesión</button>
+            </form>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</body>
+</html>

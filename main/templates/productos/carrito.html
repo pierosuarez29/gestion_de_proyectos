@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - Agrícola Díaz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/productos/carrito.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        function buscarCliente() {
+            // Obtener el valor del campo de DNI
+            var dniCliente = document.getElementById('dni_cliente').value;
+
+            // Crear una solicitud AJAX
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '{{ url_for("buscar_cliente_ajax") }}', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Reemplazar la sección del cliente con el contenido recibido
+                    document.getElementById('cliente-info').innerHTML = xhr.responseText;
+                }
+            };
+
+            // Enviar la solicitud con el DNI del cliente
+            xhr.send('dni_cliente=' + encodeURIComponent(dniCliente));
+        }
+    </script>
+</head>
+<body>
+    <div class="contenedor-carrito">
+        <h1>Carrito de Compras</h1>
+
+        <!-- Mostrar siempre la tabla de productos si existen productos -->
+        {% if productos and productos|length > 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio Unitario</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td>{{ producto[1] }}</td>
+                    <td>S/. {{ producto[2] }}</td>
+                    <td>{{ producto[3] }}</td>
+                    <td>S/. {{ producto[2] * producto[3] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3"><strong>Total</strong></td>
+                    <td><strong>S/. {{ total }}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+        {% else %}
+        <!-- Mostrar solo si el carrito realmente está vacío -->
+        <p>Tu carrito está vacío.</p>
+        {% endif %}
+
+        <!-- Agregar botones para regresar al catálogo o proceder a comprar -->
+        <div class="acciones-carrito">
+            <a href="{{ url_for('ver_productos') }}" class="boton-regresar">Volver al Catálogo</a>
+            {% if productos and productos|length > 0 %}
+            <!-- Cambiar el enlace de 'Proceder a Comprar' a un formulario que envíe un POST -->
+            <form action="{{ url_for('checkout') }}" method="POST" style="display:inline;">
+                <button type="submit" class="boton-comprar">Proceder a Comprar</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <!-- Formulario para buscar cliente por DNI -->
+        <form onsubmit="event.preventDefault(); buscarCliente();">
+            <label for="dni_cliente">Buscar Cliente por DNI:</label>
+            <input type="text" id="dni_cliente" name="dni_cliente" required>
+            <button type="submit">Buscar</button>
+        </form>
+
+        <!-- Sección de información del cliente -->
+        <div id="cliente-info">
+            <!-- Incluir el template de cliente_info.html -->
+            {% include 'productos/cliente_info.html' %}
+        </div>
+    </div>
+</body>
+</html>

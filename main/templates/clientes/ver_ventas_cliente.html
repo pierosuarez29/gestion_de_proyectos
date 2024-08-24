@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas del Cliente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/clientes/clientes.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ventas del Cliente: {{ cliente_nombre }}</h1>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>N° Venta</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Total</th>
+                        <th>Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venta in ventas %}
+                    <tr>
+                        <td>{{ venta[0] }}</td>
+                        <td>{{ venta[1] }}</td>
+                        <td>{{ venta[2] }}</td>
+                        <td>{{ venta[3] }}</td>
+                        <td><a href="" class="btn-ver-detalles">Ver Detalles</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="{{ url_for('ver_clientes') }}" class="btn-regresar">Regresar a la Lista de Clientes</a>
+    </div>
+</body>
+</html>

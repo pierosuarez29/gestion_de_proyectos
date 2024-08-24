@@ -1,0 +1,19 @@
+{% for producto in productos %}
+<div class="producto-card">
+    <h3>{{ producto[2] }}</h3>
+    <img src="{{ url_for('static', filename='imagenes/'+ producto[2]+ '.png') }}" class="icono-producto" alt="Icono">
+    <p>Precio: S/. {{ producto[1] }}</p>
+    <p>Stock: {{ producto[5] }}</p>
+
+    <!-- Campo de cantidad y botones para agregar al carrito -->
+    <form action="{{ url_for('agregar_al_carrito') }}" method="POST">
+        <input type="hidden" name="id_producto" value="{{ producto[0] }}">
+        <div class="cantidad-container">
+            <button type="button" class="cantidad-btn" onclick="changeQuantity(-1, '{{ producto[0] }}')">-</button>
+            <input type="number" id="cantidad-{{ producto[0] }}" name="cantidad" min="1" max="{{ producto[5] }}" value="1" readonly>
+            <button type="button" class="cantidad-btn" onclick="changeQuantity(1, '{{ producto[0] }}')">+</button>
+        </div>
+        <button type="submit" class="btn-agregar">Agregar al Carrito</button>
+    </form>
+</div>
+{% endfor %}

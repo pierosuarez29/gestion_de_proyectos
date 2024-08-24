@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos - Agrícola Díaz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/productos/ver_productos.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const params = new URLSearchParams(window.location.search);
+    
+            // Verificar si hay un parámetro de error
+            if (params.has('no_hay')) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ups...',
+                    text: 'No tienes elementos en el carrito.',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ url_for('ver_productos') }}";  // Redirige a la página de inicio
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/busqueda.js') }}"></script>
+    <script>
+        var verProductosUrl = "{{ url_for('ver_productos') }}";
+
+        $(document).ready(function() {
+            function updateProducts() {
+                var query = $('#search').val();
+                var filters = [];
+                $('input[name="filter"]:checked').each(function() {
+                    filters.push($(this).val());
+                });
+                var sort = $('#sort').val();
+                $.ajax({
+                    url: verProductosUrl,
+                    method: 'GET',
+                    data: {
+                        search: query,
+                        filter: filters,
+                        sort: sort
+                    },
+                    success: function(data) {
+                        $('#productos').html(data);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la solicitud AJAX:', status, error);
+                    }
+                });
+            }
+
+            $('#search').on('input', updateProducts);
+            $('input[name="filter"]').on('change', updateProducts);
+            $('#sort').on('change', updateProducts);
+        });
+    </script>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="columnas">
+            <!-- Columna de filtros -->
+            <div class="columna-filtros">
+                <h2>Catálogo de Productos</h2>
+
+                <!-- Filtros -->
+                <div class="filtros">
+                    <h3>Filtrar por Marca</h3>
+                    <div>
+                        {% for marca in marcas %}
+                            <label>
+                                <input type="checkbox" name="filter" value="{{ marca }}" {% if marca in selected_filters %}checked{% endif %}>
+                                {{ marca }}
+                            </label><br>
+                        {% endfor %}
+                    </div>
+
+                    <h3>Filtrar por Tipo</h3>
+                    <div>
+                        {% for tipo in tipos %}
+                            <label>
+                                <input type="checkbox" name="filter" value="{{ tipo }}" {% if tipo in selected_filters %}checked{% endif %}>
+                                {{ tipo }}
+                            </label><br>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Ordenar por -->
+                <div class="ordenar">
+                    <label for="sort">Ordenar por:</label>
+                    <select id="sort">
+                        <option value="">Seleccionar</option>
+                        <option value="nombre_asc" {% if request.args.get('sort') == 'nombre_asc' %}selected{% endif %}>Nombre (Ascendente)</option>
+                        <option value="nombre_desc" {% if request.args.get('sort') == 'nombre_desc' %}selected{% endif %}>Nombre (Descendente)</option>
+                        <option value="precio_asc" {% if request.args.get('sort') == 'precio_asc' %}selected{% endif %}>Precio (Ascendente)</option>
+                        <option value="precio_desc" {% if request.args.get('sort') == 'precio_desc' %}selected{% endif %}>Precio (Descendente)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Columna de productos -->
+            <div class="columna-productos">
+                <div class="fila-superior">
+                    <!-- Barra de búsqueda -->
+                    <input type="text" id="search" placeholder="Buscar por nombre, tipo o marca" value="{{ request.args.get('search', '') }}">
+
+                    <!-- Icono del carrito -->
+                    <a href="{{ url_for('ver_carrito') }}" class="carrito-icono">
+                        <img src="{{ url_for('static', filename='imagenes/registrar_compra.png') }}" alt="Carrito">
+                    </a>
+                </div>
+
+                <!-- Productos -->
+                <div class="productos" id="productos">
+                    {% include 'productos/_productos.html' %}
+                </div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('dashboard_menu') }}" class="boton-regresar">Volver al Menú</a>
+    </div>
+    <script>
+        function changeQuantity(amount, productoId) {
+            const cantidadInput = document.getElementById(`cantidad-${productoId}`);
+            let currentQuantity = parseInt(cantidadInput.value, 10);
+            const maxQuantity = parseInt(cantidadInput.max, 10);
+        
+            // Ajustar la cantidad según el botón clicado
+            currentQuantity += amount;
+        
+            // Validar los límites
+            if (currentQuantity < 1) {
+                currentQuantity = 1;
+            } else if (currentQuantity > maxQuantity) {
+                currentQuantity = maxQuantity;
+            }
+        
+            // Actualizar el valor del campo de cantidad
+            cantidadInput.value = currentQuantity;
+        }
+        </script>
+        
+</body>
+</html>

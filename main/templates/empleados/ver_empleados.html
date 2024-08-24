@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleados Activos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/empleados/empleados.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Empleados Activos</h1>
+        
+        <!-- Formulario para agregar un empleado -->
+        <div class="form-container">
+            <h2>Agregar Empleado</h2>
+            <form action="{{ url_for('agregar_empleado') }}" method="post">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+                
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required>
+                
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" required>
+                
+                <label for="dni">DNI:</label>
+                <input type="text" id="dni" name="dni" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email">
+                
+                <label for="direccion">Dirección:</label>
+                <textarea id="direccion" name="direccion"></textarea>
+                
+                <label for="contraseña">Contraseña:</label>
+                <input type="password" id="contraseña" name="contraseña" required>
+                
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+        
+        <!-- Tabla de empleados activos -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for empleado in empleados %}
+                    <tr>
+                        <td>{{ empleado[0] }}</td>
+                        <td>{{ empleado[1] }}</td>
+                        <td>{{ empleado[2] }}</td>
+                        <td>{{ empleado[3] }}</td>
+                        <td>{{ empleado[4] }}</td>
+                        <td>{{ empleado[5] }}</td>
+                        <td>
+                            <a href="{{ url_for('cambiar_estado_empleado', id_empleado=empleado[6]) }}" class="btn-eliminar">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <a href="{{ url_for('dashboard_menu') }}" class="btn-regresar">Regresar al Inicio</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proveedores Activos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/proveedores/proveedores.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Proveedores Activos</h1>
+        
+        <!-- Formulario para agregar un proveedor -->
+        <div class="form-container">
+            <h2>Agregar Proveedor</h2>
+            <form action="{{ url_for('agregar_proveedor') }}" method="post">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+                
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required>
+                
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" required>
+                
+                <label for="ruc">RUC:</label>
+                <input type="text" id="ruc" name="ruc" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email">
+                
+                <label for="direccion">Dirección:</label>
+                <textarea id="direccion" name="direccion"></textarea>
+                
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+        
+        <!-- Tabla de proveedores activos -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>RUC</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proveedor in proveedores %}
+                    <tr>
+                        <td>{{ proveedor.RUC }}</td>
+                        <td>{{ proveedor.Nombre_Proveedor }}</td>
+                        <td>{{ proveedor.Apellido_Proveedor }}</td>
+                        <td>{{ proveedor.Telefono_Proveedor }}</td>
+                        <td>{{ proveedor.Email }}</td>
+                        <td>{{ proveedor.Direccion }}</td>
+                        <td>
+                            <a href="{{ url_for('cambiar_estado_proveedor', id_proveedor=proveedor.ID_Proveedor) }}" class="btn-borrar">Borrar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <a href="{{ url_for('dashboard_menu') }}" class="btn-regresar">Regresar</a>
+    </div>
+</body>
+</html>
