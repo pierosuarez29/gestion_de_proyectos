@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de la Venta</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/clientes/clientes.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Detalles de la Venta N° {{ venta[0] }}</h1>
+        <p><strong>Cliente:</strong> {{ venta[4] }}</p>
+        <p><strong>Fecha:</strong> {{ venta[1] }}</p>
+        <p><strong>Estado:</strong> {{ venta[2] }}</p>
+        <p><strong>Total:</strong> S/ {{ venta[3] }}</p>
+        
+        <h2>Productos Comprados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in detalles %}
+                <tr>
+                    <td>{{ detalle[0] }}</td>
+                    <td>{{ detalle[1] }}</td>
+                    <td>S/ {{ detalle[2] }}</td>
+                    <td>S/ {{ detalle[3] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Botón para generar boleta en PDF -->
+        <a href="" class="btn-generar-boleta">Generar Boleta PDF</a>
+
+        <!-- Enlace para regresar a las ventas del cliente -->
+        <a href="{{ url_for('ver_ventas_cliente', id_cliente=venta[5]) }}" class="btn-regresar">Regresar a Ventas del Cliente</a>
+    </div>
+</body>
+</html>

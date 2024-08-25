@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boleta de Venta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .boleta-container {
+            width: 700px;
+            margin: 0 auto;
+            border: 1px solid #000;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .company-info,
+        .boleta-info {
+            text-align: left;
+        }
+
+        .boleta-info {
+            text-align: right;
+        }
+
+        .customer-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+        }
+
+        .detalle-venta {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .detalle-venta th, .detalle-venta td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="boleta-container">
+        <div class="header">
+            <div class="company-info">
+                <p>NOTICIERO DEL CONTADOR S.A.C.</p>
+                <p>CAL. JOAQUIN CAPELO 547 203 ZONA</p>
+                <p>MIRAFLORES - LIMA - LIMA</p>
+            </div>
+            <div class="boleta-info">
+                <p>BOLETA DE VENTA ELECTRONICA</p>
+                <p>RUC: 20556106909</p>
+                <p>{{ boleta_serie }}</p>
+            </div>
+        </div>
+
+        <div class="customer-info">
+            <p><strong>Fecha de Emisión:</strong> {{ fecha_emision }}</p>
+            <p><strong>Señor(es):</strong> {{ cliente_nombre }}</p>
+            <p><strong>DNI:</strong> {{ cliente_dni }}</p>
+            <p><strong>Tipo de Moneda:</strong> {{ tipo_moneda }}</p>
+            <p><strong>Observación:</strong> {{ observacion }}</p>
+        </div>
+
+        <table class="detalle-venta">
+            <thead>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Unidad Medida</th>
+                    <th>Código</th>
+                    <th>Descripción</th>
+                    <th>Valor Unitario</th>
+                    <th>Descuento</th>
+                    <th>Importe de Venta</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.cantidad }}</td>
+                    <td>{{ item.unidad_medida }}</td>
+                    <td>{{ item.codigo }}</td>
+                    <td>{{ item.descripcion }}</td>
+                    <td>{{ item.valor_unitario }}</td>
+                    <td>{{ item.descuento }}</td>
+                    <td>{{ item.importe_venta }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p><strong>Importe Total:</strong> S/. {{ importe_total }}</p>
+        </div>
+    </div>
+</body>
+</html>

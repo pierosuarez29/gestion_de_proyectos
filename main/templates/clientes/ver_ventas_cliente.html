@@ -26,8 +26,8 @@
                         <td>{{ venta[0] }}</td>
                         <td>{{ venta[1] }}</td>
                         <td>{{ venta[2] }}</td>
-                        <td>{{ venta[3] }}</td>
-                        <td><a href="" class="btn-ver-detalles">Ver Detalles</a></td>
+                        <td>S/ {{ venta[3] }}</td>
+                        <td><a href="{{ url_for('ver_detalles_venta', venta_id=venta[0]) }}" class="btn-ver-detalles">Ver Detalles</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

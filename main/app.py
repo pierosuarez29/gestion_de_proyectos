@@ -399,20 +399,65 @@ def ver_clientes():
 def ver_ventas_cliente(id_cliente):
     try:
         cursor = conexion.connection.cursor()
+        
+        # Obtener el nombre completo del cliente
+        cursor.execute("SELECT Nombre_Cliente, Apellido_Cliente FROM Cliente WHERE ID_Cliente = %s", (id_cliente,))
+        cliente = cursor.fetchone()
+        cliente_nombre = f"{cliente[0]} {cliente[1]}" if cliente else "Desconocido"
+        
+        # Obtener las ventas del cliente
         cursor.execute("""
             SELECT v.ID_Venta, v.Fecha, v.Estado, SUM(dv.Cantidad_Venta * p.Precio_Venta) AS Total
             FROM Venta v
             JOIN Detalle_Venta dv ON v.ID_Venta = dv.ID_Venta
             JOIN Producto p ON dv.ID_Producto = p.ID_Producto
             WHERE v.ID_Cliente = %s
-            GROUP BY v.ID_Venta
+            GROUP BY v.ID_Venta, v.Fecha, v.Estado
         """, (id_cliente,))
         ventas = cursor.fetchall()
+        #print (ventas)
         cursor.close()
-        return render_template('clientes/ver_ventas_cliente.html', ventas=ventas)
+        
+        return render_template('clientes/ver_ventas_cliente.html', ventas=ventas, cliente_nombre=cliente_nombre)
     except Exception as e:
-        flash('Error al cargar las ventas del cliente: {}'.format(e))
+        print('Error al cargar las ventas del cliente: {}'.format(e))
         return redirect(url_for('ver_clientes'))
+
+@app.route('/ver_detalles_venta/<venta_id>')
+@login_required
+def ver_detalles_venta(venta_id):
+    try:
+        cursor = conexion.connection.cursor()
+        
+        # Obtener información básica de la venta y del cliente
+        cursor.execute('''
+            SELECT v.ID_Venta, v.Fecha, v.Estado, SUM(dv.Cantidad_Venta * p.Precio_Venta) AS Total, CONCAT(c.Nombre_Cliente, ' ', c.Apellido_Cliente) AS Nombre_Cliente, v.ID_Cliente
+            FROM Venta v
+            JOIN Detalle_Venta dv ON v.ID_Venta = dv.ID_Venta
+            JOIN Producto p ON dv.ID_Producto = p.ID_Producto
+            JOIN Cliente c ON v.ID_Cliente = c.ID_Cliente
+            WHERE v.ID_Venta = %s
+            GROUP BY v.ID_Venta, v.Fecha, v.Estado, Nombre_Cliente, v.ID_Cliente
+        ''', (venta_id,))
+        venta = cursor.fetchone()
+        
+        # Obtener detalles de los productos en la venta
+        cursor.execute('''
+            SELECT p.Nombre_Producto, dv.Cantidad_Venta, p.Precio_Venta, (dv.Cantidad_Venta * p.Precio_Venta) AS Total
+            FROM Detalle_Venta dv
+            JOIN Producto p ON dv.ID_Producto = p.ID_Producto
+            WHERE dv.ID_Venta = %s
+        ''', (venta_id,))
+        detalles = cursor.fetchall()
+        
+        cursor.close()
+
+        return render_template('clientes/ver_detalles_venta.html', venta=venta, detalles=detalles)
+    except Exception as e:
+        flash('Error al cargar los detalles de la venta: {}'.format(e))
+        return redirect(url_for('ver_ventas_cliente', id_cliente=current_user.id))
+
+
 
     
 
