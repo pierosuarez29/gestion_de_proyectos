@@ -22,6 +22,11 @@ app = Flask(__name__)
 # Configuración de la clave secreta
 app.config['SECRET_KEY'] = 'mi_clave_secreta_123'  # Cambia esto a una clave secreta única y segura
 
+#pierzam.mysql.pythonanywhere-services.com
+#pierzam
+#70983031p
+#pierzam$gestion_proyectos
+
 #conexion MySQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
