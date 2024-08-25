@@ -5,26 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Productos - Agrícola Díaz</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/productos/ver_productos.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const params = new URLSearchParams(window.location.search);
-    
-            // Verificar si hay un parámetro de error
-            if (params.has('no_hay')) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Ups...',
-                    text: 'No tienes elementos en el carrito.',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "{{ url_for('ver_productos') }}";  // Redirige a la página de inicio
-                    }
-                });
-            }
-        });
-    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/busqueda.js') }}"></script>
     <script>
@@ -48,6 +28,7 @@
                     },
                     success: function(data) {
                         $('#productos').html(data);
+                        updateCarritoContador(); // Actualiza el contador del carrito
                     },
                     error: function(xhr, status, error) {
                         console.error('Error en la solicitud AJAX:', status, error);
@@ -55,9 +36,24 @@
                 });
             }
 
+            function updateCarritoContador() {
+                $.ajax({
+                    url: '{{ url_for("obtener_cantidad_carrito") }}', // Asegúrate de tener una ruta que devuelva la cantidad de productos en el carrito
+                    method: 'GET',
+                    success: function(data) {
+                        $('#carrito-contador').text(data.cantidad); // Suponiendo que la respuesta es un objeto JSON con una propiedad "cantidad"
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error al obtener la cantidad del carrito:', status, error);
+                    }
+                });
+            }
+
             $('#search').on('input', updateProducts);
             $('input[name="filter"]').on('change', updateProducts);
             $('#sort').on('change', updateProducts);
+
+            updateCarritoContador(); // Inicializa el contador al cargar la página
         });
     </script>
 </head>
@@ -113,6 +109,7 @@
                     <!-- Icono del carrito -->
                     <a href="{{ url_for('ver_carrito') }}" class="carrito-icono">
                         <img src="{{ url_for('static', filename='imagenes/registrar_compra.png') }}" alt="Carrito">
+                        <span id="carrito-contador" class="carrito-contador">0</span>
                     </a>
                 </div>
 
@@ -144,7 +141,6 @@
             // Actualizar el valor del campo de cantidad
             cantidadInput.value = currentQuantity;
         }
-        </script>
-        
+    </script>
 </body>
 </html>

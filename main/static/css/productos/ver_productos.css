@@ -1,157 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150vh;
+    height: 100vh; /* Cambiado a 100vh para ocupar toda la altura de la ventana */
     margin: 0;
     font-family: "Poppins", sans-serif;
     background-color: #f0f0f0;
 }
 
-.contenedor {
+.container {
     width: 90%;
     max-width: 1200px;
-    background-color: white;
+    background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
 
-.columnas {
-    display: flex;
-    gap: 20px;
-}
-
-.columna-filtros {
-    width: 25%;
-}
-
-.columna-productos {
-    width: 75%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.filtros {
-    margin-bottom: 20px;
-}
-
-.ordenar {
-    margin-bottom: 20px;
-}
-
-.fila-superior {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-#search {
-    padding: 10px;
-    width: 80%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.carrito-icono img {
-    width: 30px; /* Tamaño del ícono del carrito */
-    height: auto;
-}
-
-.productos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-.producto-card {
-    width: 200px;
-    background-color: #d9f7be;
-    border-radius: 15px;
-    padding: 15px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+h1 {
     text-align: center;
-    transition: transform 0.2s;
+    margin-top: 0;
+    color: #007bff;
+    font-size: 2rem;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
 }
 
-.producto-card:hover {
-    transform: scale(1.05);
+/* Estilos para la tabla de clientes */
+.table-wrapper {
+    overflow-x: auto;
 }
 
-.boton-regresar {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #5cb85c;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.2s;
-}
-
-.boton-regresar:hover {
-    background-color: #4cae4c;
-}
-
-/* Estilos para el contenedor de cantidad */
-.cantidad-container {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Centra el contenido horizontalmente */
-    margin-bottom: 10px; /* Espacio entre la cantidad y el botón de agregar al carrito */
-}
-
-/* Estilos para los botones de cantidad */
-.cantidad-btn {
-    background-color: #ddd;
-    border: 1px solid #ccc;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 16px;
-    display: inline-block; /* Asegura que los botones se alineen horizontalmente */
-}
-
-.cantidad-btn:hover {
-    background-color: #ccc;
-}
-
-/* Estilos para el campo de cantidad */
-input[type="number"] {
-    width: 60px;
-    text-align: center;
-    border: 1px solid #ccc;
-    margin: 0 5px;
-    padding: 5px;
-    font-size: 16px;
-}
-
-/* Estilos para el botón de agregar al carrito */
-.btn-agregar {
-    display: block;
+table {
     width: 100%;
-    padding: 10px;
-    background-color: #5cb85c;
-    color: white;
-    border: none;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #e2e2e2;
+}
+
+/* Estilos para el botón "Ver Ventas" */
+.btn-ver-ventas {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 2px;
+    color: #fff;
+    background-color: #5cb85c; /* Cambiado a verde similar al CSS original */
+    text-decoration: none;
     border-radius: 5px;
-    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+}
+
+.btn-ver-ventas:hover {
+    background-color: #4cae4c; /* Cambiado a verde más oscuro */
+}
+
+/* Estilos para el botón "Regresar al Menú" */
+.btn-regresar {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 20px auto;
+    color: #fff;
+    background-color: #5cb85c; /* Cambiado a verde similar al CSS original */
+    text-decoration: none;
+    border-radius: 5px;
     text-align: center;
     font-size: 16px;
-    transition: background-color 0.2s;
-    margin-top: 10px; /* Espacio entre el campo de cantidad y el botón de agregar al carrito */
-    box-sizing: border-box; /* Incluye el padding y border en el ancho total del botón */
 }
 
-.btn-agregar:hover {
-    background-color: #4cae4c;
-}
-
-.icono-producto {
-    width: 100px; /* Cambia este valor para ajustar el ancho de la imagen */
-    height: auto; /* Mantiene la proporción original de la imagen */
-    max-height: 100px; /* Ajusta la altura máxima si es necesario */
-    display: block; /* Asegura que la imagen se comporte como un bloque */
-    margin: 0 auto; /* Centra la imagen horizontalmente */
+.btn-regresar:hover {
+    background-color: #4cae4c; /* Cambiado a verde más oscuro */
 }

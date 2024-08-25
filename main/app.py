@@ -1,6 +1,6 @@
 #debug mode
 
-from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file,jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
 from flask_mysqldb import MySQL
 from uuid import uuid4
@@ -168,33 +168,52 @@ def agregar_al_carrito():
     id_producto = request.form.get('id_producto')
     cantidad = int(request.form.get('cantidad'))
 
+    if cantidad <= 0:
+        flash('La cantidad debe ser mayor a 0.')
+        return redirect(url_for('ver_productos'))
+
     try:
         cursor = conexion.connection.cursor()
 
         # Verificar si ya existe un carrito para el usuario actual
-        cursor.execute("SELECT ID_Carrito FROM Carrito WHERE ID_Empleado = %s AND DATE(Fecha_Creacion) = DATE(NOW())", (current_user.id,))
+        cursor.execute("""
+            SELECT ID_Carrito 
+            FROM Carrito 
+            WHERE ID_Empleado = %s AND DATE(Fecha_Creacion) = DATE(NOW())
+        """, (current_user.id,))
         carrito = cursor.fetchone()
 
         if carrito:
             id_carrito = carrito[0]
         else:
             id_carrito = str(uuid4())
-            cursor.execute("INSERT INTO Carrito (ID_Carrito, ID_Empleado, Fecha_Creacion) VALUES (%s, %s, %s)",
-                           (id_carrito, current_user.id, datetime.now()))
+            cursor.execute("""
+                INSERT INTO Carrito (ID_Carrito, ID_Empleado, Fecha_Creacion) 
+                VALUES (%s, %s, %s)
+            """, (id_carrito, current_user.id, datetime.now()))
         
         # Verificar si el producto ya está en el carrito
-        cursor.execute("SELECT ID_Detalle_Carrito FROM Detalle_Carrito WHERE ID_Carrito = %s AND ID_Producto = %s", (id_carrito, id_producto))
+        cursor.execute("""
+            SELECT ID_Detalle_Carrito 
+            FROM Detalle_Carrito 
+            WHERE ID_Carrito = %s AND ID_Producto = %s
+        """, (id_carrito, id_producto))
         detalle = cursor.fetchone()
 
         if detalle:
             # Actualizar cantidad
-            cursor.execute("UPDATE Detalle_Carrito SET Cantidad = Cantidad + %s WHERE ID_Detalle_Carrito = %s",
-                        (cantidad, detalle[0]))
+            cursor.execute("""
+                UPDATE Detalle_Carrito 
+                SET Cantidad = Cantidad + %s 
+                WHERE ID_Detalle_Carrito = %s
+            """, (cantidad, detalle[0]))
         else:
             # Insertar nuevo detalle
             id_detalle_carrito = str(uuid4())
-            cursor.execute("INSERT INTO Detalle_Carrito (ID_Detalle_Carrito, ID_Carrito, ID_Producto, Cantidad) VALUES (%s, %s, %s, %s)",
-                        (id_detalle_carrito, id_carrito, id_producto, cantidad))
+            cursor.execute("""
+                INSERT INTO Detalle_Carrito (ID_Detalle_Carrito, ID_Carrito, ID_Producto, Cantidad) 
+                VALUES (%s, %s, %s, %s)
+            """, (id_detalle_carrito, id_carrito, id_producto, cantidad))
         
         conexion.connection.commit()
         cursor.close()
@@ -203,6 +222,47 @@ def agregar_al_carrito():
     except Exception as e:
         flash('Error al agregar el producto al carrito: {}'.format(e))
         return redirect(url_for('ver_productos'))
+
+    
+@app.route('/obtener_cantidad_carrito', methods=['GET'])
+@login_required
+def obtener_cantidad_carrito():
+    try:
+        cursor = conexion.connection.cursor()
+        
+        # Consulta para obtener el ID del carrito del empleado actual
+        cursor.execute("""
+            SELECT ID_Carrito 
+            FROM Carrito 
+            WHERE ID_Empleado = %s AND DATE(Fecha_Creacion) = DATE(NOW())
+        """, (current_user.id,))
+        carrito_id = cursor.fetchone()
+        
+        if carrito_id is None:
+            # Si no hay carrito para hoy, devolver cantidad 0
+            cursor.close()
+            return jsonify({'cantidad': 0})
+        
+        carrito_id = carrito_id[0]
+        
+        # Consulta para sumar la cantidad total de productos en el carrito
+        cursor.execute("""
+            SELECT SUM(Cantidad) 
+            FROM Detalle_Carrito 
+            WHERE ID_Carrito = %s
+        """, (carrito_id,))
+        cantidad_total = cursor.fetchone()[0]
+        
+        # Si no hay productos en el carrito, la suma será None, así que establecemos 0 en ese caso
+        if cantidad_total is None:
+            cantidad_total = 0
+        
+        cursor.close()
+        return jsonify({'cantidad': cantidad_total})
+    except Exception as e:
+        print(f'Error al obtener la cantidad del carrito: {e}')
+        return jsonify({'cantidad': 0}), 500
+
 
 
 @app.route('/ver_carrito', methods=['GET', 'POST'])
@@ -239,7 +299,7 @@ def ver_carrito():
 
         if not carrito:
             flash('No tienes productos en el carrito.')
-            return redirect(url_for('ver_productos') + '?no_hay=true')
+            return redirect(url_for('ver_productos'))
         id_carrito = carrito[0]
 
         # Obtener los detalles del carrito
@@ -260,6 +320,7 @@ def ver_carrito():
     except Exception as e:
         flash(f'Error al obtener el carrito: {e}')
         return redirect(url_for('ver_productos'))
+
 
 
 @app.route('/registrar_cliente', methods=['POST'])
@@ -317,9 +378,9 @@ def checkout():
 
         # Obtener el ID_Cliente de la sesión
         id_cliente = session.get('id_cliente')
-        print("ID_CLIENTE: ",id_cliente)
+        
         if not id_cliente:
-            flash('No se ha seleccionado un cliente para el carrito.')
+            print('No se ha seleccionado un cliente para el carrito.')
             return redirect(url_for('ver_carrito'))
 
         # Obtener el carrito del usuario actual
@@ -330,9 +391,9 @@ def checkout():
         """, (current_user.id,))
         carrito = cursor.fetchone()
 
-        #if not carrito:
-        #    flash('No hay carrito para procesar.')
-        #    return redirect(url_for('ver_productos'))
+        if not carrito:
+            print('No hay carrito disponible para procesar.')
+            return redirect(url_for('ver_carrito'))
 
         id_carrito = carrito[0]
 
@@ -351,16 +412,25 @@ def checkout():
             WHERE ID_Carrito = %s
         """, (id_carrito,))
         detalles_carrito = cursor.fetchall()
-
-        #if not detalles_carrito:
-        #    flash('El carrito está vacío. No se puede procesar la compra.')
-        #    return redirect(url_for('ver_carrito'))
-
+        
+        total_venta = 0
         for producto_id, cantidad in detalles_carrito:
             cursor.execute("""
                 INSERT INTO Detalle_Venta (ID_Detalle_Venta, ID_Producto, ID_Venta, Cantidad_Venta)
                 VALUES (%s, %s, %s, %s)
             """, (str(uuid4()), producto_id, id_venta, cantidad))
+            
+            # Obtener el precio del producto
+            cursor.execute("""
+                SELECT Precio_Venta
+                FROM Producto
+                WHERE ID_Producto = %s
+            """, (producto_id,))
+            precio = cursor.fetchone()
+            if precio is None:
+                raise ValueError(f"El precio del producto con ID {producto_id} no se encuentra en la base de datos.")
+            precio = precio[0]
+            total_venta += precio * cantidad
             
             # Actualizar el stock del producto restando la cantidad vendida
             cursor.execute("""
@@ -368,7 +438,7 @@ def checkout():
                 SET Stock = Stock - %s
                 WHERE ID_Producto = %s
             """, (cantidad, producto_id))
-            
+
         # Vaciar el carrito
         cursor.execute("DELETE FROM Detalle_Carrito WHERE ID_Carrito = %s", (id_carrito,))
         cursor.execute("DELETE FROM Carrito WHERE ID_Carrito = %s", (id_carrito,))
@@ -376,15 +446,18 @@ def checkout():
         # Confirmar transacciones
         conexion.connection.commit()
         cursor.close()
-
+        print(f"id_cliente: {id_cliente}, id_venta: {id_venta}")
+        
         # Limpiar ID_Cliente de la sesión
         session.pop('id_cliente', None)
-
-        # Redirigir a la página de confirmación
-        return redirect(url_for('ver_productos'))
+        print("Redirigiendo a ver_detalles_venta")
+        
+        # Redirigir a la página de detalles de la venta
+        return redirect(url_for('ver_detalles_venta', id_cliente=id_cliente, venta_id=id_venta) + '?compra_realizada=true' )
 
     except Exception as e:
-        # Imprimir el error en la consola para depuración
+        print(f'Ocurrió un error al procesar la compra: {e}')
+        conexion.connection.rollback()
         return redirect(url_for('ver_carrito'))
 
 
@@ -414,7 +487,7 @@ def ver_ventas_cliente(id_cliente):
         cliente = cursor.fetchone()
         cliente_nombre = f"{cliente[0]} {cliente[1]}" if cliente else "Desconocido"
         
-        # Obtener las ventas del cliente
+        # Obtener las ventas del cliente, ordenadas por fecha (más recientes primero)
         cursor.execute("""
             SELECT v.ID_Venta, v.Fecha, v.Estado, SUM(dv.Cantidad_Venta * p.Precio_Venta) AS Total
             FROM Venta v
@@ -422,15 +495,17 @@ def ver_ventas_cliente(id_cliente):
             JOIN Producto p ON dv.ID_Producto = p.ID_Producto
             WHERE v.ID_Cliente = %s
             GROUP BY v.ID_Venta, v.Fecha, v.Estado
+            ORDER BY v.Fecha ASC
         """, (id_cliente,))
         ventas = cursor.fetchall()
-        #print (ventas)
+        #print(ventas)
         cursor.close()
         
         return render_template('clientes/ver_ventas_cliente.html', ventas=ventas, cliente_nombre=cliente_nombre, id_cliente=id_cliente)
     except Exception as e:
-        print('Error al cargar las ventas del cliente: {}'.format(e))
+        print(f'Error al cargar las ventas del cliente: {e}')
         return redirect(url_for('ver_clientes'))
+
 
 @app.route('/ver_detalles_venta/<id_cliente>/<venta_id>')
 @login_required

@@ -11,6 +11,16 @@
             // Obtener el valor del campo de DNI
             var dniCliente = document.getElementById('dni_cliente').value;
 
+            // Validar formato del DNI
+            if (!/^[0-9]{8}$/.test(dniCliente)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Advertencia',
+                    text: 'El DNI debe tener 8 dígitos.',
+                });
+                return;
+            }
+
             // Crear una solicitud AJAX
             var xhr = new XMLHttpRequest();
             xhr.open('POST', '{{ url_for("buscar_cliente_ajax") }}', true);
@@ -25,7 +35,7 @@
 
             // Enviar la solicitud con el DNI del cliente
             xhr.send('dni_cliente=' + encodeURIComponent(dniCliente));
-        }
+        };
     </script>
 </head>
 <body>

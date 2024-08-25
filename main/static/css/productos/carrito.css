@@ -7,11 +7,15 @@ body {
     font-family: "Poppins", sans-serif;
     background-color: #f0f0f0;
 }
+
 /* Estilos para el carrito */
 .contenedor-carrito {
     padding: 20px;
     max-width: 750px;
     margin: auto;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -69,4 +73,43 @@ th {
 
 .boton-regresar:hover, .boton-comprar:hover {
     background-color: #4cae4c;
+}
+
+/* Estilos para el formulario de búsqueda */
+.form-busqueda {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.form-busqueda label {
+    margin-right: 10px;
+}
+
+.form-busqueda input {
+    padding: 5px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form-busqueda button {
+    padding: 5px 10px;
+    background-color: #5bc0de;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-busqueda button:hover {
+    background-color: #31b0d5;
+}
+
+/* Estilos para la sección de información del cliente */
+#cliente-info {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }

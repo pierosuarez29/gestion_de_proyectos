@@ -10,7 +10,7 @@
         <input type="hidden" name="id_producto" value="{{ producto[0] }}">
         <div class="cantidad-container">
             <button type="button" class="cantidad-btn" onclick="changeQuantity(-1, '{{ producto[0] }}')">-</button>
-            <input type="number" id="cantidad-{{ producto[0] }}" name="cantidad" min="1" max="{{ producto[5] }}" value="1" readonly>
+            <input type="number" id="cantidad-{{ producto[0] }}" name="cantidad" min="1" max="{{ producto[5] }}" value="0" readonly>
             <button type="button" class="cantidad-btn" onclick="changeQuantity(1, '{{ producto[0] }}')">+</button>
         </div>
         <button type="submit" class="btn-agregar">Agregar al Carrito</button>

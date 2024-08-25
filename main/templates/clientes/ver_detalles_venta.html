@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles de la Venta</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/clientes/clientes.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('compra_realizada')) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Compra realizada con éxito',
+                    text: 'Gracias por tu compra. Tu carrito ha sido procesado.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="container">

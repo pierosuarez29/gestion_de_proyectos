@@ -1,30 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150vh;
+    height: 100vh; /* Ajustado para ocupar toda la altura de la ventana */
     margin: 0;
     font-family: "Poppins", sans-serif;
     background-color: #f0f0f0;
 }
+
 .container {
     width: 80%;
+    max-width: 1200px; /* Establece un ancho máximo para el contenedor */
     margin: auto;
     overflow: hidden;
     background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra más ligera */
     padding: 20px;
 }
 
 h1 {
     text-align: center;
     margin-top: 0;
-    color: #007bff;
+    color: #28a745; /* Tono de verde */
     font-size: 2rem;
-    border-bottom: 2px solid #007bff;
+    border-bottom: 2px solid #28a745; /* Línea debajo del título en verde */
     padding-bottom: 10px;
 }
+
 
 /* Estilos para la tabla de clientes */
 .table-wrapper {
@@ -65,15 +70,15 @@ tr:hover {
     padding: 8px 12px;
     margin: 2px;
     color: #fff;
-    background-color: #5bc0de;
+    background-color: #5cb85c; /* Cambiado a verde para coincidir con el estilo original */
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: 5px; /* Cambiado a 5px para coincidir con el estilo original */
     text-align: center;
     font-size: 14px;
 }
 
 .btn-ver-ventas:hover {
-    background-color: #31b0d5;
+    background-color: #4cae4c; /* Cambiado a verde más oscuro */
 }
 
 /* Estilos para el botón "Regresar al Menú" */
@@ -82,13 +87,66 @@ tr:hover {
     padding: 10px 20px;
     margin: 20px auto;
     color: #fff;
-    background-color: #5bc0de;
+    background-color: #5cb85c; /* Cambiado a verde para coincidir con el estilo original */
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 5px; /* Cambiado a 5px para coincidir con el estilo original */
     text-align: center;
     font-size: 16px;
 }
 
 .btn-regresar:hover {
-    background-color: #31b0d5;
+    background-color: #4cae4c; /* Cambiado a verde más oscuro */
+}
+
+/* Estilos para el botón "Generar Boleta PDF" */
+.btn-generar-boleta {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 20px auto;
+    color: #fff;
+    background-color: #5cb85c; /* Color de fondo verde */
+    text-decoration: none; /* Sin subrayado */
+    border-radius: 5px; /* Bordes redondeados */
+    text-align: center;
+    font-size: 16px;
+    transition: background-color 0.2s; /* Transición suave para el cambio de color */
+}
+
+.btn-generar-boleta:hover {
+    background-color: #4cae4c; /* Color de fondo verde más oscuro al pasar el ratón */
+}
+
+/* Estilos para el botón "Ver Detalles" */
+.btn-ver-detalles {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #5cb85c; /* Color de fondo verde */
+    text-decoration: none; /* Sin subrayado */
+    border-radius: 5px; /* Bordes redondeados */
+    text-align: center;
+    font-size: 16px;
+    transition: background-color 0.2s; /* Transición suave para el cambio de color */
+}
+
+.btn-ver-detalles:hover {
+    background-color: #4cae4c; /* Color de fondo verde más oscuro al pasar el ratón */
+}
+
+/* Estilos para el botón "Regresar a la Lista de Clientes" */
+.btn-regresar {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 20px auto;
+    color: #fff;
+    background-color: #5cb85c; /* Color de fondo verde */
+    text-decoration: none; /* Sin subrayado */
+    border-radius: 5px; /* Bordes redondeados */
+    text-align: center;
+    font-size: 16px;
+    transition: background-color 0.2s; /* Transición suave para el cambio de color */
+}
+
+.btn-regresar:hover {
+    background-color: #4cae4c; /* Color de fondo verde más oscuro al pasar el ratón */
 }
