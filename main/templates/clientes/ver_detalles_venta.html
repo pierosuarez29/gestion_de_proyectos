@@ -37,7 +37,7 @@
         </table>
 
         <!-- Botón para generar boleta en PDF -->
-        <a href="" class="btn-generar-boleta">Generar Boleta PDF</a>
+        <a href="{{ url_for('generar_boleta_pdf', venta_id=venta[0]) }}" class="btn-generar-boleta">Generar Boleta PDF</a>
 
         <!-- Enlace para regresar a las ventas del cliente -->
         <a href="{{ url_for('ver_ventas_cliente', id_cliente=venta[5]) }}" class="btn-regresar">Regresar a Ventas del Cliente</a>

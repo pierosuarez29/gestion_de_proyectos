@@ -1,12 +1,21 @@
 #debug mode
 
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
 from flask_mysqldb import MySQL
 from uuid import uuid4
 from datetime import datetime
+import pdfkit
+import platform
+from io import BytesIO
 
-
+# Configuración dinámica para pdfkit según el entorno
+if platform.system() == "Windows":
+    # Ruta de wkhtmltopdf en Windows
+    PDFKIT_CONFIG = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
+else:
+    # Para Linux y MacOS, wkhtmltopdf está generalmente en /usr/bin/wkhtmltopdf
+    PDFKIT_CONFIG = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
 app = Flask(__name__)
 
@@ -418,14 +427,14 @@ def ver_ventas_cliente(id_cliente):
         #print (ventas)
         cursor.close()
         
-        return render_template('clientes/ver_ventas_cliente.html', ventas=ventas, cliente_nombre=cliente_nombre)
+        return render_template('clientes/ver_ventas_cliente.html', ventas=ventas, cliente_nombre=cliente_nombre, id_cliente=id_cliente)
     except Exception as e:
         print('Error al cargar las ventas del cliente: {}'.format(e))
         return redirect(url_for('ver_clientes'))
 
-@app.route('/ver_detalles_venta/<venta_id>')
+@app.route('/ver_detalles_venta/<id_cliente>/<venta_id>')
 @login_required
-def ver_detalles_venta(venta_id):
+def ver_detalles_venta(id_cliente,venta_id):
     try:
         cursor = conexion.connection.cursor()
         
@@ -440,6 +449,41 @@ def ver_detalles_venta(venta_id):
             GROUP BY v.ID_Venta, v.Fecha, v.Estado, Nombre_Cliente, v.ID_Cliente
         ''', (venta_id,))
         venta = cursor.fetchone()
+        print(venta)
+        # Obtener detalles de los productos en la venta
+        cursor.execute('''
+            SELECT p.Nombre_Producto, dv.Cantidad_Venta, p.Precio_Venta, (dv.Cantidad_Venta * p.Precio_Venta) AS Total
+            FROM Detalle_Venta dv
+            JOIN Producto p ON dv.ID_Producto = p.ID_Producto
+            WHERE dv.ID_Venta = %s
+        ''', (venta_id,))
+        detalles = cursor.fetchall()
+        print(detalles)
+        cursor.close()
+
+        return render_template('clientes/ver_detalles_venta.html', venta=venta, detalles=detalles)
+    except Exception as e:
+        flash('Error al cargar los detalles de la venta: {}'.format(e))
+        return redirect(url_for('ver_ventas_cliente', id_cliente=id_cliente))
+
+@app.route('/generar_boleta/<venta_id>', methods=['GET'])
+@login_required
+def generar_boleta_pdf(venta_id):
+    try:
+        cursor = conexion.connection.cursor()
+        
+        # Obtener información básica de la venta y del cliente
+        cursor.execute('''
+            SELECT v.ID_Venta, v.Fecha, v.Estado, SUM(dv.Cantidad_Venta * p.Precio_Venta) AS Total,
+                   CONCAT(c.Nombre_Cliente, ' ', c.Apellido_Cliente) AS Nombre_Cliente, c.DNI_Cliente, v.ID_Cliente
+            FROM Venta v
+            JOIN Detalle_Venta dv ON v.ID_Venta = dv.ID_Venta
+            JOIN Producto p ON dv.ID_Producto = p.ID_Producto
+            JOIN Cliente c ON v.ID_Cliente = c.ID_Cliente
+            WHERE v.ID_Venta = %s
+            GROUP BY v.ID_Venta, v.Fecha, v.Estado, Nombre_Cliente, c.DNI_Cliente, v.ID_Cliente
+        ''', (venta_id,))
+        venta = cursor.fetchone()
         
         # Obtener detalles de los productos en la venta
         cursor.execute('''
@@ -452,10 +496,33 @@ def ver_detalles_venta(venta_id):
         
         cursor.close()
 
-        return render_template('clientes/ver_detalles_venta.html', venta=venta, detalles=detalles)
+        # Procesar el número de boleta (formato de letras-letras-letras)
+        boleta_numero = str(venta[0])[:8].upper()   # Toma los primeros cuatro caracteres
+
+        # Renderizar la plantilla HTML
+        rendered_html = render_template('boleta/boleta.html', 
+                                        venta_id=venta[0], 
+                                        fecha_emision=venta[1],
+                                        cliente_nombre=venta[4],
+                                        cliente_dni=venta[5],
+                                        tipo_moneda="Soles",  # Asumimos "Soles", modificar según sea necesario
+                                        observacion="Sin observaciones",  # Asumimos "Sin observaciones"
+                                        items=[{'cantidad': d[1], 'unidad_medida': 'Unidad', 'codigo': '12345', 'descripcion': d[0], 'valor_unitario': d[2], 'descuento': 0, 'importe_venta': d[3]} for d in detalles],
+                                        importe_total=venta[3],
+                                        boleta_serie=boleta_numero)  # Añadir el número de boleta al contexto
+
+        # Generar el PDF desde el HTML renderizado
+        pdf = pdfkit.from_string(rendered_html, False, configuration=PDFKIT_CONFIG)
+
+        # Preparar el archivo PDF para enviar como respuesta
+        response = BytesIO(pdf)
+        response.seek(0)
+
+        return send_file(response, as_attachment=True, download_name=f'boleta_{venta_id}.pdf', mimetype='application/pdf')
+
     except Exception as e:
-        flash('Error al cargar los detalles de la venta: {}'.format(e))
-        return redirect(url_for('ver_ventas_cliente', id_cliente=current_user.id))
+        flash(f"Error al generar la boleta: {str(e)}", "error")
+        return redirect(url_for('ver_detalles_venta', venta_id=venta_id))
 
 
 

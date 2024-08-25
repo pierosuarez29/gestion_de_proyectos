@@ -60,14 +60,14 @@
     <div class="boleta-container">
         <div class="header">
             <div class="company-info">
-                <p>NOTICIERO DEL CONTADOR S.A.C.</p>
+                <p>AGRÍCOLA DÍAZ S.A.C.</p>
                 <p>CAL. JOAQUIN CAPELO 547 203 ZONA</p>
-                <p>MIRAFLORES - LIMA - LIMA</p>
+                <p>LAMBAYEQUE - LAMBAYEQUE - LAMBAYEQUE</p>
             </div>
             <div class="boleta-info">
                 <p>BOLETA DE VENTA ELECTRONICA</p>
                 <p>RUC: 20556106909</p>
-                <p>{{ boleta_serie }}</p>
+                <p>N° DE BOLETA: {{ boleta_serie }}</p> <!-- Mostrar el número de boleta aquí -->
             </div>
         </div>
 
@@ -83,8 +83,10 @@
             <thead>
                 <tr>
                     <th>Cantidad</th>
+                    <!--
                     <th>Unidad Medida</th>
                     <th>Código</th>
+                    -->
                     <th>Descripción</th>
                     <th>Valor Unitario</th>
                     <th>Descuento</th>
@@ -95,8 +97,10 @@
                 {% for item in items %}
                 <tr>
                     <td>{{ item.cantidad }}</td>
+                    <!--
                     <td>{{ item.unidad_medida }}</td>
                     <td>{{ item.codigo }}</td>
+                    -->
                     <td>{{ item.descripcion }}</td>
                     <td>{{ item.valor_unitario }}</td>
                     <td>{{ item.descuento }}</td>
