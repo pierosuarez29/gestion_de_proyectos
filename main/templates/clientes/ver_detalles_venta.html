@@ -22,7 +22,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Detalles de la Venta N° {{ venta[0] }}</h1>
+        <h1>Detalles de la Boleta N° {{ venta[0][:8].upper() }}</h1>
         <p><strong>Cliente:</strong> {{ venta[4] }}</p>
         <p><strong>Fecha:</strong> {{ venta[1] }}</p>
         <p><strong>Estado:</strong> {{ venta[2] }}</p>
@@ -49,12 +49,12 @@
                 {% endfor %}
             </tbody>
         </table>
-
+        <!-- Enlace para regresar a las ventas del cliente -->
+        <a href="{{ url_for('ver_ventas_cliente', id_cliente=venta[5]) }}" class="btn-regresar">Regresar a Ventas del Cliente</a>
         <!-- Botón para generar boleta en PDF -->
         <a href="{{ url_for('generar_boleta_pdf', venta_id=venta[0]) }}" class="btn-generar-boleta">Generar Boleta PDF</a>
 
-        <!-- Enlace para regresar a las ventas del cliente -->
-        <a href="{{ url_for('ver_ventas_cliente', id_cliente=venta[5]) }}" class="btn-regresar">Regresar a Ventas del Cliente</a>
+        
     </div>
 </body>
 </html>

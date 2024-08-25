@@ -13,7 +13,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>N° Venta</th>
+                        <th>N° Boleta</th>
                         <th>Fecha</th>
                         <th>Estado</th>
                         <th>Total</th>
@@ -23,7 +23,7 @@
                 <tbody>
                     {% for venta in ventas %}
                     <tr>
-                        <td>{{ venta[0] }}</td>
+                        <td>{{ venta[0].upper() }}</td>
                         <td>{{ venta[1] }}</td>
                         <td>{{ venta[2] }}</td>
                         <td>S/ {{ venta[3] }}</td>

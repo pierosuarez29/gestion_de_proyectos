@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150vh;
+    height: 100vh; /* Ajustado para ocupar toda la altura de la ventana */
     margin: 0;
     font-family: "Poppins", sans-serif;
     background-color: #f0f0f0;
@@ -11,18 +13,22 @@ body {
 /* Contenedor principal */
 .container {
     width: 80%;
-    margin: 0 auto;
+    max-width: 1200px; /* Establece un ancho máximo para el contenedor */
+    margin: auto;
     padding: 20px;
     background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra más ligera */
 }
 
 /* Título */
 h1 {
     text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+    color: #28a745; /* Tono de verde */
+    margin-top: 0;
+    font-size: 2rem;
+    border-bottom: 2px solid #28a745; /* Línea debajo del título en verde */
+    padding-bottom: 10px;
 }
 
 /* Formulario para agregar empleado */
@@ -36,14 +42,14 @@ h1 {
 
 .form-container h2 {
     margin-top: 0;
-    color: #333;
+    color: black; /* Tono de verde */
     font-size: 24px;
 }
 
 .form-container label {
     display: block;
     margin-bottom: 8px;
-    color: #333;
+    color: black; /* Tono de verde */
     font-weight: bold;
 }
 
@@ -54,7 +60,7 @@ h1 {
     width: 100%;
     padding: 10px;
     margin-bottom: 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd; /* Borde gris claro */
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 16px;
@@ -69,42 +75,41 @@ h1 {
     display: inline-block;
     padding: 12px 20px;
     color: #fff;
-    background-color: #28a745;
+    background-color: #28a745; /* Verde principal */
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
 .form-container button:hover {
-    background-color: #218838;
+    background-color: #218838; /* Verde oscuro */
 }
 
-/* Estilo para la tabla */
+/* Estilos para la tabla de empleados */
 .table-wrapper {
     overflow-x: auto;
-    margin-top: 20px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin: 20px 0;
 }
 
-thead {
-    background-color: #007bff;
-    color: #fff;
+table, th, td {
+    border: 1px solid #ddd;
 }
 
 th, td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
 }
 
 th {
-    background-color: #0056b3;
+    background-color: #f2f2f2;
+    color: #333;
 }
 
 tr:nth-child(even) {
@@ -112,7 +117,7 @@ tr:nth-child(even) {
 }
 
 tr:hover {
-    background-color: #f1f1f1;
+    background-color: #e2e2e2;
 }
 
 /* Botón de eliminar */
@@ -120,15 +125,15 @@ tr:hover {
     display: inline-block;
     padding: 6px 12px;
     color: #fff;
-    background-color: #dc3545;
+    background-color: #c82333; /* Rojo para eliminar */
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: 5px; /* Bordes redondeados */
     font-size: 14px;
     transition: background-color 0.3s ease;
 }
 
 .btn-eliminar:hover {
-    background-color: #c82333;
+    background-color: #a71d2a; /* Rojo oscuro */
 }
 
 /* Botón de regresar */
@@ -137,13 +142,14 @@ tr:hover {
     padding: 10px 20px;
     margin-top: 20px;
     color: #fff;
-    background-color: #007bff;
+    background-color: #28a745; /* Verde principal */
     text-decoration: none;
     border-radius: 5px;
     text-align: center;
     font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
 .btn-regresar:hover {
-    background-color: #0056b3;
+    background-color: #218838; /* Verde oscuro */
 }
