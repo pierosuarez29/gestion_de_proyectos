@@ -6,24 +6,33 @@
     <title>Catálogo de Productos - Agrícola Díaz</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/productos/ver_productos.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ url_for('static', filename='js/busqueda.js') }}"></script>
     <script>
         var verProductosUrl = "{{ url_for('ver_productos') }}";
 
         $(document).ready(function() {
             function updateProducts() {
                 var query = $('#search').val();
-                var filters = [];
-                $('input[name="filter"]:checked').each(function() {
-                    filters.push($(this).val());
+                var filtersMarca = [];
+                var filtersTipo = [];
+                
+                // Recoger filtros por marca
+                $('input[name="filter_marca"]:checked').each(function() {
+                    filtersMarca.push($(this).val());
                 });
+
+                // Recoger filtros por tipo
+                $('input[name="filter_tipo"]:checked').each(function() {
+                    filtersTipo.push($(this).val());
+                });
+
                 var sort = $('#sort').val();
                 $.ajax({
                     url: verProductosUrl,
                     method: 'GET',
                     data: {
                         search: query,
-                        filter: filters,
+                        filter_marca: filtersMarca,
+                        filter_tipo: filtersTipo,
                         sort: sort
                     },
                     success: function(data) {
@@ -50,7 +59,8 @@
             }
 
             $('#search').on('input', updateProducts);
-            $('input[name="filter"]').on('change', updateProducts);
+            $('input[name="filter_marca"]').on('change', updateProducts);
+            $('input[name="filter_tipo"]').on('change', updateProducts);
             $('#sort').on('change', updateProducts);
 
             updateCarritoContador(); // Inicializa el contador al cargar la página
@@ -64,28 +74,36 @@
             <div class="columna-filtros">
                 <h2>Catálogo de Productos</h2>
 
-                <!-- Filtros -->
-                <div class="filtros">
-                    <h3>Filtrar por Marca</h3>
-                    <div>
-                        {% for marca in marcas %}
+                <!-- Filtros por Marca -->
+                <form id="filter-form" method="get" action="{{ url_for('ver_productos') }}">
+                    <!-- Filtros por Marca -->
+                    <h3>Marcas:</h3>
+                    <div class="filtros-marca">
+                    {% for marca in marcas %}
+                        <div class="filtro-item"> 
                             <label>
-                                <input type="checkbox" name="filter" value="{{ marca }}" {% if marca in selected_filters %}checked{% endif %}>
+                                <input type="checkbox" name="filter_marca" value="{{ marca }}" {% if marca in selected_filters %}checked{% endif %}>
                                 {{ marca }}
-                            </label><br>
-                        {% endfor %}
-                    </div>
-
-                    <h3>Filtrar por Tipo</h3>
-                    <div>
-                        {% for tipo in tipos %}
+                            </label>
+                        </div>    
+                    {% endfor %}
+                    </div>  
+                    <!-- Filtros por Tipo -->
+                    <h3>Tipos:</h3>
+                    <div class="filtros-tipo">
+                    {% for tipo in tipos %}
+                        <div class="filtro-item">
                             <label>
-                                <input type="checkbox" name="filter" value="{{ tipo }}" {% if tipo in selected_filters %}checked{% endif %}>
+                                <input type="checkbox" name="filter_tipo" value="{{ tipo }}" {% if tipo in selected_filters %}checked{% endif %}>
                                 {{ tipo }}
-                            </label><br>
-                        {% endfor %}
+                            </label>
+                        </div>
+                    {% endfor %}
                     </div>
-                </div>
+                    <div class="cajon-boton-aplicar">
+                        <button type="submit" class="boton-aplicar">Aplicar filtros</button>
+                    </div>
+                </form>
 
                 <!-- Ordenar por -->
                 <div class="ordenar">

@@ -28,15 +28,58 @@ body {
 /* Filtros */
 .columna-filtros {
     width: 25%;
+    padding: 10px;
+    background-color: #e9f5e9;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.filtros {
+.filtros-marca, .filtros-tipo {
     margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-radius: 5px;
+}
+
+.filtro-item {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filtro-item label {
+    cursor: pointer;
 }
 
 .ordenar {
     margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-radius: 5px;
 }
+
+.cajon-boton-aplicar{
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;     /* Centra verticalmente */
+
+}
+
+.boton-aplicar {
+    display: block;
+    width: 80%;
+    padding: 10px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
 
 /* Productos */
 .columna-productos {

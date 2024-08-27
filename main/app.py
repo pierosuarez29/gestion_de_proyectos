@@ -100,7 +100,8 @@ def dashboard_menu():
 @login_required
 def ver_productos():
     search = request.args.get('search', '')
-    filtros = request.args.getlist('filter')  # Filtros seleccionados
+    filtros_marca = request.args.getlist('filter_marca')  # Filtros seleccionados por marca
+    filtros_tipo = request.args.getlist('filter_tipo')  # Filtros seleccionados por tipo
     sort = request.args.get('sort', '')  # Parámetro de ordenación
 
     try:
@@ -109,7 +110,6 @@ def ver_productos():
         # Obtener las marcas y tipos para el filtrado
         cursor.execute("SELECT DISTINCT Nombre_Marca FROM Marca")
         marcas = [row[0] for row in cursor.fetchall()]
-
         cursor.execute("SELECT DISTINCT Tipo FROM Producto")
         tipos = [row[0] for row in cursor.fetchall()]
 
@@ -123,23 +123,20 @@ def ver_productos():
 
         params = []
         
+        # Agregar condiciones de filtro por marca
+        if filtros_marca:
+            query += " AND m.Nombre_Marca IN (" + ", ".join(["%s"] * len(filtros_marca)) + ")"
+            params.extend(filtros_marca)
+
+        # Agregar condiciones de filtro por tipo
+        if filtros_tipo:
+            query += " AND p.Tipo IN (" + ", ".join(["%s"] * len(filtros_tipo)) + ")"
+            params.extend(filtros_tipo)
+
         # Agregar condiciones de búsqueda
         if search:
             query += " AND (p.Nombre_Producto LIKE %s OR p.Tipo LIKE %s OR m.Nombre_Marca LIKE %s)"
             params += [f'%{search}%'] * 3
-        
-        # Agregar condiciones de filtro
-        if filtros:
-            marcas_filtros = [f for f in filtros if f in marcas]
-            tipos_filtros = [f for f in filtros if f in tipos]
-
-            if marcas_filtros:
-                query += " AND m.Nombre_Marca IN (" + ", ".join(["%s"] * len(marcas_filtros)) + ")"
-                params.extend(marcas_filtros)
-                
-            if tipos_filtros:
-                query += " AND p.Tipo IN (" + ", ".join(["%s"] * len(tipos_filtros)) + ")"
-                params.extend(tipos_filtros)
 
         # Agregar cláusula de ordenación
         if sort == 'nombre_asc':
@@ -162,10 +159,13 @@ def ver_productos():
             return render_template('productos/_productos.html', productos=productos)
         else:
             # Renderizar la página completa
-            return render_template('productos/ver_productos.html', productos=productos, marcas=marcas, tipos=tipos, selected_filters=filtros)
+            return render_template('productos/ver_productos.html', productos=productos, marcas=marcas, tipos=tipos, selected_filters=filtros_marca + filtros_tipo)
     except Exception as e:
         flash('Error al cargar los productos: {}'.format(e))
         return redirect(url_for('dashboard_menu'))
+
+
+
 
 @app.route('/agregar_al_carrito', methods=['POST'])
 @login_required
