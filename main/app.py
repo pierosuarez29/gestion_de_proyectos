@@ -9,13 +9,7 @@ import pdfkit
 import platform
 from io import BytesIO
 
-# Configuración dinámica para pdfkit según el entorno
-if platform.system() == "Windows":
-    # Ruta de wkhtmltopdf en Windows
-    PDFKIT_CONFIG = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
-else:
-    # Para Linux y MacOS, wkhtmltopdf está generalmente en /usr/bin/wkhtmltopdf
-    PDFKIT_CONFIG = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+
 
 app = Flask(__name__)
 
@@ -27,14 +21,28 @@ app.config['SECRET_KEY'] = 'mi_clave_secreta_123'  # Cambia esto a una clave sec
 #70983031p
 #pierzam$gestion_proyectos
 
-#conexion MySQL
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '2911'#'1608'#1405
-app.config['MYSQL_DB'] = 'gestion_de_proyectos'
+
+
+# Configuración dinámica para pdfkit según el entorno
+if platform.system() == "Windows":
+    # Ruta de wkhtmltopdf en Windows
+    PDFKIT_CONFIG = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
+    #conexion MySQL
+    app.config['MYSQL_HOST'] = 'localhost'
+    app.config['MYSQL_USER'] = 'root'
+    app.config['MYSQL_PASSWORD'] = '2911'#'1608'#1405
+    app.config['MYSQL_DB'] = 'gestion_de_proyectos'
+    
+else:
+    # Para Linux y MacOS, wkhtmltopdf está generalmente en /usr/bin/wkhtmltopdf
+    PDFKIT_CONFIG = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+    #conexion MySQL
+    app.config['MYSQL_HOST'] = 'pierzam.mysql.pythonanywhere-services.com'
+    app.config['MYSQL_USER'] = 'pierzam'
+    app.config['MYSQL_PASSWORD'] = '70983031p'
+    app.config['MYSQL_DB'] = 'pierzam$gestion_proyectos'
 
 conexion = MySQL(app)
-
 # Configuración Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -697,6 +705,7 @@ def cambiar_estado_proveedor(id_proveedor):
 @login_required
 def ver_empleados():
     try:
+        id_empleado_actual = current_user.id
         cursor = conexion.connection.cursor()
         cursor.execute("""
             SELECT DNI_Empleado, Nombres_Empleado, Apellidos_Empleado, Telefono_Empleado, Email, Direccion, ID_Empleado
@@ -705,7 +714,7 @@ def ver_empleados():
         """)
         empleados = cursor.fetchall()
         cursor.close()
-        return render_template('empleados/ver_empleados.html', empleados=empleados)
+        return render_template('empleados/ver_empleados.html', empleados=empleados,id_empleado_actual=id_empleado_actual )
     except Exception as e:
         flash('Error al cargar los empleados: {}'.format(e))
         return redirect(url_for('index'))

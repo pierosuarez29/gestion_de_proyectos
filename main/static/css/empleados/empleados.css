@@ -153,3 +153,10 @@ tr:hover {
 .btn-regresar:hover {
     background-color: #218838; /* Verde oscuro */
 }
+
+.btn-eliminar[disabled] {
+    background-color: #ccc; /* Color gris para indicar deshabilitado */
+    cursor: not-allowed; /* Cambiar el cursor para indicar que no se puede hacer clic */
+    color: #666; /* Texto gris */
+}
+

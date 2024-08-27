@@ -63,7 +63,11 @@
                         <td>{{ empleado[4] }}</td>
                         <td>{{ empleado[5] }}</td>
                         <td>
-                            <a href="{{ url_for('cambiar_estado_empleado', id_empleado=empleado[6]) }}" class="btn-eliminar">Eliminar</a>
+                            {% if empleado[6] == id_empleado_actual %}
+                                <button class="btn-eliminar" disabled>Eliminar</button> <!-- Botón deshabilitado -->
+                            {% else %}
+                                <a href="{{ url_for('cambiar_estado_empleado', id_empleado=empleado[6]) }}" class="btn-eliminar">Eliminar</a>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
