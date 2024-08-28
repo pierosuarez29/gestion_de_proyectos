@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto - Agrícola Díaz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/productos/ver_productos.css') }}">
+    <style>
+        .mensaje-error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor-detalle-producto">
+        <div class="detalle-producto">
+            <h1>{{ producto[2] }}</h1> <!-- Nombre del producto -->
+            <img src="{{ url_for('static', filename='imagenes/'+ producto[2]  +'.png') }}" alt="Imagen del Producto" class="detalle-imagen-producto">
+            
+            <!-- Información del producto -->
+            <form id="formEditarProducto" action="{{ url_for('editar_producto', id_producto=producto[0]) }}" method="post">
+                <div class="detalle-info-producto">
+                    <p><strong>Nombre:</strong>
+                        <span class="readonly">{{ producto[2] }}</span>
+                        <input class="editable" name="nombre" id="nombre" value="{{ producto[2] }}">
+                    </p>
+                    <p><strong>Precio:</strong> 
+                        <span class="readonly">S/ {{ producto[1] }}</span>
+                        <input type="text" class="editable" name="precio" value="{{ producto[1] }}" id="precio">
+                        <small id="errorPrecio" class="mensaje-error"></small>
+                    </p>
+                    <p><strong>Descripción:</strong>
+                        <span class="readonly">{{ producto[3] }}</span>
+                        <textarea class="editable" name="descripcion" id="descripcion">{{ producto[3] }}</textarea>
+                    </p>
+                    <p><strong>Stock disponible:</strong>
+                        <span class="readonly">{{ producto[5] }}</span>
+                        <input type="number" class="editable" name="stock" value="{{ producto[5] }}" id="stock">
+                        <small id="errorStock" class="mensaje-error"></small>
+                    </p>
+                    <p><strong>Estado:</strong>
+                        <span class="readonly">{{ producto[4] }}</span>
+                        <select class="editable" name="estado" id="estado">
+                            <option value="Disponible" {{ 'selected' if producto[4] == 'Disponible' else '' }}>Disponible</option>
+                            <option value="No disponible" {{ 'selected' if producto[4] == 'No disponible' else '' }}>No disponible</option>
+                        </select>
+                    </p>
+                    <p><strong>Tipo:</strong>
+                        <span class="readonly">{{ producto[6] }}</span>
+                        <input type="text" class="editable" name="tipo" value="{{ producto[6] }}" id="tipo">
+                    </p>
+                </div>
+
+                <!-- Botones para editar, guardar y cancelar la edición del producto -->
+                <button type="button" id="editarProductoBtn" class="detalle-boton-editar" onclick="limpiarMensajesError()">Editar Producto</button>
+                <button type="submit" id="guardarProductoBtn" class="detalle-boton-guardar editable">Guardar Cambios</button>
+                <button type="button" id="cancelarProductoBtn" class="detalle-boton-cancelar editable" onclick="limpiarMensajesError()">Cancelar</button>
+            </form>
+
+            <!-- Campo de cantidad y botones para agregar al carrito -->
+            <form id="formAgregarCarrito" action="{{ url_for('agregar_al_carrito') }}" method="POST">
+                <input type="hidden" name="id_producto" value="{{ producto[0] }}">
+                <div class="cantidad-container">
+                    <button type="button" class="cantidad-btn" onclick="changeQuantity(-1, '{{ producto[0] }}')">-</button>
+                    <input type="number" id="cantidad-{{ producto[0] }}" name="cantidad" min="0" max="{{ producto[5] }}" value="0" readonly>
+                    <button type="button" class="cantidad-btn" onclick="changeQuantity(1, '{{ producto[0] }}')">+</button>
+                </div>
+                <button type="submit" class="btn-agregar">Agregar al Carrito</button>
+            </form>
+
+            <!-- Botón para volver al catálogo -->
+            <a href="{{ url_for('ver_productos') }}" class="detalle-boton-regresar">Volver al Catálogo</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('editarProductoBtn').addEventListener('click', function() {
+            document.querySelector('.detalle-producto').classList.add('editing');
+
+            // Ocultar el formulario de agregar al carrito durante la edición
+            document.getElementById('formAgregarCarrito').style.display = 'none';
+
+            // Guardar los valores originales para poder restaurarlos si se cancela
+            document.querySelectorAll('.editable').forEach(function(el) {
+                el.dataset.originalValue = el.value;
+            });
+
+            // Mostrar botones de guardar y cancelar, ocultar los de editar
+            document.getElementById('guardarProductoBtn').style.display = 'inline';
+            document.getElementById('cancelarProductoBtn').style.display = 'inline';
+            document.getElementById('editarProductoBtn').style.display = 'none';
+        });
+
+        document.getElementById('cancelarProductoBtn').addEventListener('click', function() {
+            // Restaurar los valores originales
+            document.querySelectorAll('.editable').forEach(function(el) {
+                el.value = el.dataset.originalValue;
+            });
+
+            // Volver al estado de solo lectura
+            document.querySelector('.detalle-producto').classList.remove('editing');
+
+            // Mostrar el formulario de agregar al carrito de nuevo
+            document.getElementById('formAgregarCarrito').style.display = 'block';
+
+            // Limpiar mensajes de error
+            limpiarMensajesError();
+
+            // Mostrar botones de editar, ocultar los de guardar y cancelar
+            document.getElementById('guardarProductoBtn').style.display = 'none';
+            document.getElementById('cancelarProductoBtn').style.display = 'none';
+            document.getElementById('editarProductoBtn').style.display = 'inline';
+        });
+
+        function validarPrecio(input) {
+            let valor = input.value;
+            let errorMensaje = document.getElementById('errorPrecio');
+            
+            // Define la expresión regular para validar el formato del precio
+            let regex = /^(\d+\.?\d*|\.\d+)$/;
+        
+            // Verifica si el valor es válido
+            if (!regex.test(valor) || parseFloat(valor) <= 0) {
+                // Si el valor no es válido, muestra el mensaje de error y mantiene el valor anterior
+                errorMensaje.textContent = 'El precio debe ser un número mayor que 0 y solo contener dígitos y un punto decimal.';
+                errorMensaje.style.display = 'block'; // Mostrar el mensaje de error
+                
+                // Restaurar el valor del input al último valor válido
+                input.value = input.dataset.originalValue || '';
+            } else {
+                // Si el valor es válido, oculta el mensaje de error
+                errorMensaje.textContent = '';
+                errorMensaje.style.display = 'none';
+                
+                // Actualiza el valor original al nuevo valor válido
+                input.dataset.originalValue = valor;
+            }
+        }
+
+        function validarStock(input) {
+            let valor = input.value;
+            let errorMensaje = document.getElementById('errorStock');
+            
+            // Define la expresión regular para validar que el valor sea un número entero positivo
+            let regex = /^\d+$/;
+        
+            // Verifica si el valor es válido
+            if (!regex.test(valor)) {
+                // Si el valor no es válido, muestra el mensaje de error y mantiene el valor anterior
+                errorMensaje.textContent = 'El stock debe ser un número entero.';
+                errorMensaje.style.display = 'block'; // Mostrar el mensaje de error
+                
+                // Restaurar el valor del input al último valor válido
+                input.value = input.dataset.originalValue || '';
+            } else {
+                // Si el valor es válido, oculta el mensaje de error
+                errorMensaje.textContent = '';
+                errorMensaje.style.display = 'none';
+                
+                // Actualiza el valor original al nuevo valor válido
+                input.dataset.originalValue = valor;
+            }
+        }
+        
+        // Inicializa los valores originales al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            let precioInput = document.getElementById('precio');
+            precioInput.dataset.originalValue = precioInput.value;
+
+            let stockInput = document.getElementById('stock');
+            stockInput.dataset.originalValue = stockInput.value;
+        });
+        
+        // Enlaza las funciones a los eventos de input del campo
+        document.getElementById('precio').addEventListener('input', function() {
+            validarPrecio(this);
+        });
+        
+        document.getElementById('stock').addEventListener('input', function() {
+            validarStock(this);
+        });
+        
+        function limpiarMensajesError() {
+            document.querySelectorAll('.mensaje-error').forEach(function(el) {
+                el.textContent = '';
+                el.style.display = 'none'; // Asegurarse de que todos los mensajes de error estén ocultos
+            });
+        }
+
+        function changeQuantity(amount, productoId) {
+            const cantidadInput = document.getElementById(`cantidad-${productoId}`);
+            let currentQuantity = parseInt(cantidadInput.value, 10);
+            const maxQuantity = parseInt(cantidadInput.max, 10);
+
+            // Actualizar la cantidad actual
+            currentQuantity += amount;
+
+            // Validar los límites
+            if (currentQuantity < 0) {
+                currentQuantity = 0;
+            } else if (currentQuantity > maxQuantity) {
+                currentQuantity = maxQuantity;
+            }
+        
+            // Actualizar el valor del campo de cantidad
+            cantidadInput.value = currentQuantity;
+        }
+    </script>
+</body>
+</html>

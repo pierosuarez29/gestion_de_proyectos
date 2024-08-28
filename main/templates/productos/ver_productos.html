@@ -150,8 +150,8 @@
             currentQuantity += amount;
         
             // Validar los límites
-            if (currentQuantity < 1) {
-                currentQuantity = 1;
+            if (currentQuantity < 0) {
+                currentQuantity = 0;
             } else if (currentQuantity > maxQuantity) {
                 currentQuantity = maxQuantity;
             }

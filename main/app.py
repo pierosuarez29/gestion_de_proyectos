@@ -16,12 +16,6 @@ app = Flask(__name__)
 # Configuración de la clave secreta
 app.config['SECRET_KEY'] = 'mi_clave_secreta_123'  # Cambia esto a una clave secreta única y segura
 
-#pierzam.mysql.pythonanywhere-services.com
-#pierzam
-#70983031p
-#pierzam$gestion_proyectos
-
-
 
 # Configuración dinámica para pdfkit según el entorno
 if platform.system() == "Windows":
@@ -172,8 +166,60 @@ def ver_productos():
         flash('Error al cargar los productos: {}'.format(e))
         return redirect(url_for('dashboard_menu'))
 
+@app.route('/ver_detalle_producto/<string:id_producto>')
+def ver_detalle_producto(id_producto):
+    try:
+        cursor = conexion.connection.cursor()
+        cursor.execute("SELECT * FROM Producto WHERE ID_Producto = %s", (id_producto,))
+        producto = cursor.fetchone()
+        cursor.close()
+        print(producto)
+        if producto:
+            return render_template('productos/producto_detalle.html', producto=producto)
+        else:
+            flash('Producto no encontrado.')
+            return redirect(url_for('ver_productos'))
+    except Exception as e:
+        flash('Error al cargar los detalles del producto: {}'.format(e))
+        return redirect(url_for('ver_productos'))
 
+@app.route('/producto/<id_producto>', methods=['GET', 'POST'])
+def editar_producto(id_producto):
+    if request.method == 'POST':
+        # Recibe datos del formulario
+        nombre = request.form['nombre']
+        precio = request.form['precio']
+        descripcion = request.form['descripcion']
+        stock = request.form['stock']
+        estado = request.form['estado']
+        tipo = request.form['tipo']
 
+        # Realiza la actualización del producto en la base de datos
+        try:
+            cursor = conexion.connection.cursor()
+            query = """
+                UPDATE Producto 
+                SET Nombre_Producto= %s, Precio_Venta = %s, Descripcion = %s, Stock = %s, Estado = %s, Tipo = %s 
+                WHERE ID_Producto = %s
+            """
+            cursor.execute(query, (nombre, precio, descripcion, stock, estado, tipo, id_producto))
+            conexion.connection.commit()
+            flash('Producto actualizado con éxito!', 'success')
+        except Exception as e:
+            flash(f'Error al actualizar el producto: {e}', 'danger')
+        finally:
+            cursor.close()
+
+        return redirect(url_for('editar_producto', id_producto=id_producto))
+
+    else:
+        # Obtener los detalles del producto de la base de datos
+        cursor = conexion.connection.cursor()
+        cursor.execute("SELECT * FROM Producto WHERE ID_Producto = %s", (id_producto,))
+        producto = cursor.fetchone()
+        cursor.close()
+        
+        return render_template('productos/producto_detalle.html', producto=producto)
 
 @app.route('/agregar_al_carrito', methods=['POST'])
 @login_required
@@ -235,6 +281,8 @@ def agregar_al_carrito():
     except Exception as e:
         flash('Error al agregar el producto al carrito: {}'.format(e))
         return redirect(url_for('ver_productos'))
+
+
 
     
 @app.route('/obtener_cantidad_carrito', methods=['GET'])

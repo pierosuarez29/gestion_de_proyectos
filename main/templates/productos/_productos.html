@@ -1,7 +1,12 @@
 {% for producto in productos %}
 <div class="producto-card">
     <h3>{{ producto[2] }}</h3>
-    <img src="{{ url_for('static', filename='imagenes/'+ producto[2]+ '.png') }}" class="icono-producto" alt="Icono">
+    
+    <!-- Imagen clickeable que redirige a la página de detalles del producto -->
+    <a href="{{ url_for('ver_detalle_producto', id_producto=producto[0]) }}">
+        <img src="{{ url_for('static', filename='imagenes/' + producto[2] + '.png') }}" class="icono-producto" alt="Icono">
+    </a>
+    
     <p>Precio: S/. {{ producto[1] }}</p>
     <p>Stock: {{ producto[5] }}</p>
 
@@ -10,7 +15,7 @@
         <input type="hidden" name="id_producto" value="{{ producto[0] }}">
         <div class="cantidad-container">
             <button type="button" class="cantidad-btn" onclick="changeQuantity(-1, '{{ producto[0] }}')">-</button>
-            <input type="number" id="cantidad-{{ producto[0] }}" name="cantidad" min="1" max="{{ producto[5] }}" value="0" readonly>
+            <input type="number" id="cantidad-{{ producto[0] }}" name="cantidad" min="0" max="{{ producto[5] }}" value="0" readonly>
             <button type="button" class="cantidad-btn" onclick="changeQuantity(1, '{{ producto[0] }}')">+</button>
         </div>
         <button type="submit" class="btn-agregar">Agregar al Carrito</button>

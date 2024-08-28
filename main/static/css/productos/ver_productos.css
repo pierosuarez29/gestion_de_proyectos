@@ -223,3 +223,142 @@ input[type="number"] {
     text-align: center;
     line-height: 1;
 }
+
+
+/* Estilos para el contenedor de detalle del producto */
+.contenedor-detalle-producto {
+    width: 90%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Estilos para la imagen del producto */
+.detalle-imagen-producto {
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Estilos para la información del producto */
+.detalle-info-producto {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.detalle-info-producto p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+/* Estilos para el botón de agregar al carrito */
+.detalle-boton-agregar-carrito {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+.detalle-boton-agregar-carrito:hover {
+    background-color: #4cae4c;
+}
+
+/* Estilos para el botón de regresar */
+.detalle-boton-regresar {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.detalle-boton-regresar:hover {
+    background-color: #4cae4c;
+}
+
+/*acaba*/
+/* Estilos para los campos editables */
+.editable {
+    display: none; /* Ocultar los campos editables por defecto */
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño de letra más grande */
+    font-family: 'Arial', sans-serif; /* Fuente legible y agradable */
+}
+.editable:focus {
+    outline: none;
+    border-color: #4CAF50; /* Cambiar el color del borde al enfocarse */
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.5); /* Efecto de sombra al enfocarse */
+}
+.editing .editable {
+    display: block; /* Mostrar los campos editables en modo de edición */
+    margin-bottom: 10px;
+}
+.editing .readonly {
+    display: none; /* Ocultar los campos de solo lectura en modo de edición */
+}
+.detalle-boton-editar,
+.detalle-boton-guardar,
+.detalle-boton-cancelar {
+    display: inline-block;
+    margin: 10px 0;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px; /* Bordes redondeados para los botones */
+    cursor: pointer;
+    font-size: 16px;
+}
+.detalle-boton-guardar,
+.detalle-boton-cancelar {
+    display: none; /* Ocultar los botones de guardar y cancelar por defecto */
+}
+.editing .detalle-boton-guardar,
+.editing .detalle-boton-cancelar {
+    display: inline-block; /* Mostrar los botones de guardar y cancelar en modo de edición */
+}
+.editing .detalle-boton-editar {
+    display: none; /* Ocultar el botón de editar en modo de edición */
+}
+.detalle-boton-agregar-carrito {
+    padding: 10px 20px;
+    background-color: #4cae4c;
+    color: white;
+    border: none;
+    border-radius: 5px; /* Bordes redondeados para el botón de agregar al carrito */
+    cursor: pointer;
+    font-size: 16px;
+}
+.detalle-boton-agregar-carrito:hover {
+    background-color: #4cae4c; /* Cambiar el color al pasar el ratón */
+}
+
+
+/* Estilo adicional para mensajes de error */
+.mensaje-error {
+    color: red; /* Color rojo para destacar el error */
+    font-size: 0.9em; /* Tamaño de fuente un poco más pequeño */
+    margin-top: 5px; /* Espacio entre el campo y el mensaje de error */
+    display: none; /* Oculto por defecto */
+}
+
