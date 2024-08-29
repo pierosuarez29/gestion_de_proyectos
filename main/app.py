@@ -85,10 +85,10 @@ def iniciar_sesion():
                 login_user(user)
                 return redirect(url_for('dashboard_menu'))
             
-            flash('Credenciales inválidas. Por favor, intenta nuevamente.')
+            print('Credenciales inválidas. Por favor, intenta nuevamente.')
             return redirect(url_for('index'))
         except Exception as e:
-            flash('Ocurrió un error al procesar tu solicitud: {}'.format(e))
+            print('Ocurrió un error al procesar tu solicitud: {}'.format(e))
             return redirect(url_for('index'))
     return render_template('iniciar_sesion.html')
 
@@ -166,7 +166,7 @@ def ver_productos():
             # Renderizar la página completa
             return render_template('productos/ver_productos.html', productos=productos, marcas=marcas, tipos=tipos, selected_filters=filtros_marca + filtros_tipo, selected_estado=filtro_estado)
     except Exception as e:
-        flash('Error al cargar los productos: {}'.format(e))
+        print('Error al cargar los productos: {}'.format(e))
         return redirect(url_for('dashboard_menu'))
 
 
@@ -243,13 +243,13 @@ def agregar_producto():
             conexion.connection.commit()
             cursor.close()
 
-            flash('Producto agregado exitosamente.')
+            print('Producto agregado exitosamente.')
             print("termine la funcion")
             return redirect(url_for('ver_productos'))
 
         except Exception as e:
             print("estoy en except")
-            flash(f'Error al agregar el producto: {e}')
+            print(f'Error al agregar el producto: {e}')
             return redirect(url_for('agregar_producto'))
 
     # Si es una solicitud GET, mostrar el formulario
@@ -280,10 +280,10 @@ def ver_detalle_producto(id_producto):
         if producto:
             return render_template('productos/producto_detalle.html', producto=producto)
         else:
-            flash('Producto no encontrado.')
+            print('Producto no encontrado.')
             return redirect(url_for('ver_productos'))
     except Exception as e:
-        flash('Error al cargar los detalles del producto: {}'.format(e))
+        print('Error al cargar los detalles del producto: {}'.format(e))
         return redirect(url_for('ver_productos'))
 
 @app.route('/producto/<id_producto>', methods=['GET', 'POST'])
@@ -307,9 +307,9 @@ def editar_producto(id_producto):
             """
             cursor.execute(query, (nombre, precio, descripcion, stock, estado, tipo, id_producto))
             conexion.connection.commit()
-            flash('Producto actualizado con éxito!', 'success')
+            print('Producto actualizado con éxito!', 'success')
         except Exception as e:
-            flash(f'Error al actualizar el producto: {e}', 'danger')
+            print(f'Error al actualizar el producto: {e}', 'danger')
         finally:
             cursor.close()
 
@@ -331,7 +331,7 @@ def agregar_al_carrito():
     cantidad = int(request.form.get('cantidad'))
 
     if cantidad <= 0:
-        flash('La cantidad debe ser mayor a 0.')
+        print('La cantidad debe ser mayor a 0.')
         return redirect(url_for('ver_productos'))
 
     try:
@@ -379,10 +379,10 @@ def agregar_al_carrito():
         
         conexion.connection.commit()
         cursor.close()
-        flash('Producto agregado al carrito exitosamente.')
+        print('Producto agregado al carrito exitosamente.')
         return redirect(url_for('ver_productos'))
     except Exception as e:
-        flash('Error al agregar el producto al carrito: {}'.format(e))
+        print('Error al agregar el producto al carrito: {}'.format(e))
         return redirect(url_for('ver_productos'))
 
 
@@ -462,7 +462,7 @@ def ver_carrito():
         carrito = cursor.fetchone()
 
         if not carrito:
-            flash('No tienes productos en el carrito.')
+            print('No tienes productos en el carrito.')
             return redirect(url_for('ver_productos'))
         id_carrito = carrito[0]
 
@@ -482,7 +482,7 @@ def ver_carrito():
         return render_template('productos/carrito.html', productos=productos, total=total)
 
     except Exception as e:
-        flash(f'Error al obtener el carrito: {e}')
+        print(f'Error al obtener el carrito: {e}')
         return redirect(url_for('ver_productos'))
 
 
@@ -507,11 +507,11 @@ def registrar_cliente():
         conexion.connection.commit()
         cursor.close()
 
-        flash('Cliente registrado exitosamente.')
+        print('Cliente registrado exitosamente.')
         return redirect(url_for('ver_carrito'))
 
     except Exception as e:
-        flash(f'Error al registrar el cliente: {e}')
+        print(f'Error al registrar el cliente: {e}')
         return redirect(url_for('ver_carrito'))
 
 @app.route('/buscar_cliente_ajax', methods=['POST'])
@@ -636,7 +636,7 @@ def ver_clientes():
         cursor.close()
         return render_template('clientes/ver_clientes.html', clientes=clientes)
     except Exception as e:
-        flash('Error al cargar los clientes: {}'.format(e))
+        print('Error al cargar los clientes: {}'.format(e))
         return redirect(url_for('dashboard_menu'))
     
     
@@ -702,7 +702,7 @@ def ver_detalles_venta(id_cliente,venta_id):
 
         return render_template('clientes/ver_detalles_venta.html', venta=venta, detalles=detalles)
     except Exception as e:
-        flash('Error al cargar los detalles de la venta: {}'.format(e))
+        print('Error al cargar los detalles de la venta: {}'.format(e))
         return redirect(url_for('ver_ventas_cliente', id_cliente=id_cliente))
 
 @app.route('/generar_boleta/<venta_id>', methods=['GET'])
@@ -760,7 +760,7 @@ def generar_boleta_pdf(venta_id):
         return send_file(response, as_attachment=True, download_name=f'boleta_{venta_id}.pdf', mimetype='application/pdf')
 
     except Exception as e:
-        flash(f"Error al generar la boleta: {str(e)}", "error")
+        print(f"Error al generar la boleta: {str(e)}", "error")
         return redirect(url_for('ver_detalles_venta', venta_id=venta_id))
 
 
@@ -796,7 +796,7 @@ def ver_proveedores():
         
         return render_template('proveedores/ver_proveedores.html', proveedores=proveedores)
     except Exception as e:
-        flash('Error al cargar los proveedores: {}'.format(e))
+        print('Error al cargar los proveedores: {}'.format(e))
         return redirect(url_for('dashboard_menu'))
 
 @app.route('/agregar_proveedor', methods=['GET', 'POST'])
@@ -819,10 +819,10 @@ def agregar_proveedor():
             conexion.connection.commit()
             cursor.close()
             
-            flash('Proveedor agregado exitosamente.')
+            print('Proveedor agregado exitosamente.')
             return redirect(url_for('ver_proveedores'))
         except Exception as e:
-            flash('Error al agregar el proveedor: {}'.format(e))
+            print('Error al agregar el proveedor: {}'.format(e))
             return redirect(url_for('ver_proveedores'))
     
     return render_template('proveedores/ver_proveedores.html')
@@ -844,9 +844,9 @@ def cambiar_estado_proveedor(id_proveedor):
         """, (id_proveedor,))
         conexion.connection.commit()
         cursor.close()
-        flash('Estado del proveedor actualizado correctamente.')
+        print('Estado del proveedor actualizado correctamente.')
     except Exception as e:
-        flash('Error al actualizar el estado del proveedor: {}'.format(e))
+        print('Error al actualizar el estado del proveedor: {}'.format(e))
     
     return redirect(url_for('ver_proveedores'))
 
@@ -867,7 +867,7 @@ def ver_empleados():
         cursor.close()
         return render_template('empleados/ver_empleados.html', empleados=empleados,id_empleado_actual=id_empleado_actual )
     except Exception as e:
-        flash('Error al cargar los empleados: {}'.format(e))
+        print('Error al cargar los empleados: {}'.format(e))
         return redirect(url_for('index'))
 
 @app.route('/agregar_empleado', methods=['POST'])
@@ -889,9 +889,9 @@ def agregar_empleado():
         """, (nombre, apellido, telefono, dni, email, direccion, contraseña))
         conexion.connection.commit()
         cursor.close()
-        flash('Empleado agregado correctamente.')
+        print('Empleado agregado correctamente.')
     except Exception as e:
-        flash('Error al agregar el empleado: {}'.format(e))
+        print('Error al agregar el empleado: {}'.format(e))
     
     return redirect(url_for('ver_empleados'))
 
@@ -910,9 +910,9 @@ def cambiar_estado_empleado(id_empleado):
         """, (id_empleado,))
         conexion.connection.commit()
         cursor.close()
-        flash('Estado del empleado actualizado correctamente.')
+        print('Estado del empleado actualizado correctamente.')
     except Exception as e:
-        flash('Error al actualizar el estado del empleado: {}'.format(e))
+        print('Error al actualizar el estado del empleado: {}'.format(e))
     
     return redirect(url_for('ver_empleados'))
 
