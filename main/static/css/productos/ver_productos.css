@@ -8,6 +8,7 @@ body {
     margin: 0;
     font-family: "Poppins", sans-serif;
     background-color: #f0f0f0;
+    overflow-y: auto;
 }
 
 .contenedor {
@@ -17,6 +18,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    height: auto;
 }
 
 /* Ajuste para las columnas */
