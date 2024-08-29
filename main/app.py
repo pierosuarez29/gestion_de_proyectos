@@ -916,6 +916,104 @@ def cambiar_estado_empleado(id_empleado):
     
     return redirect(url_for('ver_empleados'))
 
+@app.route('/ver_reportes', methods=['GET'])
+@login_required
+def ver_reportes():
+    return render_template('pdfs/reportes.html')
+
+
+@app.route('/descargar_productos_pdf', methods=['GET'])
+@login_required
+def descargar_productos_pdf():
+    try:
+        cursor = conexion.connection.cursor()
+        
+        # Obtener la lista de productos desde la base de datos
+        cursor.execute('''
+            SELECT ID_Producto, Nombre_Producto, Precio_Venta, Stock 
+            FROM Producto
+        ''')
+        productos = cursor.fetchall()
+        
+        cursor.close()
+
+        # Renderizar la plantilla HTML para el PDF
+        rendered_html = render_template('pdfs/productos.html', productos=productos)
+
+        # Generar el PDF desde el HTML renderizado
+        pdf = pdfkit.from_string(rendered_html, False, configuration=PDFKIT_CONFIG)
+
+        # Preparar el archivo PDF para enviar como respuesta
+        response = BytesIO(pdf)
+        response.seek(0)
+
+        return send_file(response, as_attachment=True, download_name='lista_productos.pdf', mimetype='application/pdf')
+
+    except Exception as e:
+        print(f"Error al generar el PDF de productos: {str(e)}")
+        return redirect(url_for('ver_reportes'))  # Redirige a una página de error si ocurre una excepción
+
+@app.route('/descargar_empleados_pdf', methods=['GET'])
+@login_required
+def descargar_empleados_pdf():
+    try:
+        cursor = conexion.connection.cursor()
+        
+        # Obtener la lista de empleados desde la base de datos
+        cursor.execute('''
+            SELECT DNI_Empleado, Nombres_Empleado, Apellidos_Empleado, Telefono_Empleado, Estado 
+            FROM Empleado
+        ''')
+        empleados = cursor.fetchall()
+        
+        cursor.close()
+
+        # Renderizar la plantilla HTML para el PDF de empleados
+        rendered_html = render_template('pdfs/empleados.html', empleados=empleados)
+
+        # Generar el PDF desde el HTML renderizado
+        pdf = pdfkit.from_string(rendered_html, False, configuration=PDFKIT_CONFIG)
+
+        # Preparar el archivo PDF para enviar como respuesta
+        response = BytesIO(pdf)
+        response.seek(0)
+
+        return send_file(response, as_attachment=True, download_name='lista_empleados.pdf', mimetype='application/pdf')
+
+    except Exception as e:
+        print(f"Error al generar el PDF de empleados: {str(e)}")
+        return redirect(url_for('ver_reportes'))  # Redirige a una página de error si ocurre una excepción
+
+@app.route('/descargar_proveedores_pdf', methods=['GET'])
+@login_required
+def descargar_proveedores_pdf():
+    try:
+        cursor = conexion.connection.cursor()
+        
+        # Obtener la lista de proveedores desde la base de datos
+        cursor.execute('''
+            SELECT RUC, Nombre_Proveedor, Direccion, Telefono_Proveedor, Email
+            FROM Proveedor
+        ''')
+        proveedores = cursor.fetchall()
+        
+        cursor.close()
+
+        # Renderizar la plantilla HTML para el PDF de proveedores
+        rendered_html = render_template('pdfs/proveedores.html', proveedores=proveedores)
+
+        # Generar el PDF desde el HTML renderizado
+        pdf = pdfkit.from_string(rendered_html, False, configuration=PDFKIT_CONFIG)
+
+        # Preparar el archivo PDF para enviar como respuesta
+        response = BytesIO(pdf)
+        response.seek(0)
+
+        return send_file(response, as_attachment=True, download_name='lista_proveedores.pdf', mimetype='application/pdf')
+
+    except Exception as e:
+        print(f"Error al generar el PDF de proveedores: {str(e)}")
+        return redirect(url_for('ver_reportes'))  # Redirige a una página de error si ocurre una excepción
 
 
 if __name__=='__main__':
