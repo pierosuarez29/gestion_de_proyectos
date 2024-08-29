@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Producto - Agrícola Díaz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/productos/ver_productos.css') }}">
+    <style>
+        .btn-agregar-nueva { 
+            margin-top: 10px; 
+            display: block;
+        }
+        .ocultar { 
+            display: none; 
+        }
+    </style>
+    <script>
+        function toggleInput(id) {
+            var select = document.getElementById(id);
+            var input = document.getElementById(id + '_nuevo');
+            var button = document.getElementById('btn_' + id);
+            if (select.value === 'nuevo') {
+                input.classList.remove('ocultar');
+                button.classList.add('ocultar');
+            } else {
+                input.classList.add('ocultar');
+                button.classList.remove('ocultar');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="contenedor">
+        <h2>Agregar Nuevo Producto</h2>
+        <form method="post" enctype="multipart/form-data" class="form-agregar-producto">
+            <label for="nombre_producto">Nombre del Producto:</label>
+            <input type="text" id="nombre_producto" name="nombre_producto" class="input-agregar" required>
+
+            <label for="precio_venta">Precio de Venta:</label>
+            <input type="number" id="precio_venta" name="precio_venta" class="input-agregar" step="0.01" required>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" class="textarea-agregar"></textarea>
+
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" class="input-agregar" required>
+
+            <label for="tipo">Tipo:</label>
+            <select id="tipo" name="tipo" class="select-agregar" onchange="toggleInput('tipo')">
+                <option value="">Seleccionar Tipo</option>
+                {% for tipo in tipos %}
+                    <option value="{{ tipo }}">{{ tipo }}</option>
+                {% endfor %}
+                <option value="nuevo">Nuevo Tipo</option>
+            </select>
+            <input type="text" id="tipo_nuevo" name="tipo_nuevo" class="input-agregar ocultar" placeholder="Escriba el tipo aquí">
+
+            <label for="marca">Marca:</label>
+            <select id="marca" name="marca" class="select-agregar" onchange="toggleInput('marca')">
+                <option value="">Seleccionar Marca</option>
+                {% for marca in marcas %}
+                    <option value="{{ marca }}">{{ marca }}</option>
+                {% endfor %}
+                <option value="nuevo">Nueva Marca</option>
+            </select>
+            <input type="text" id="marca_nuevo" name="marca_nuevo" class="input-agregar ocultar" placeholder="Escriba la marca aquí">
+
+            <label for="imagen">Imagen del Producto:</label>
+            <input type="file" id="imagen" name="imagen" class="input-agregar">
+
+            <button type="submit" class="btn-agregar-producto">Añadir Producto</button>
+        </form>
+        <a href="{{ url_for('ver_productos') }}" class="boton-regresar">Volver al Catálogo</a>
+    </div>
+</body>
+</html>

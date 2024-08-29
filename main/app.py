@@ -8,6 +8,8 @@ from datetime import datetime
 import pdfkit
 import platform
 from io import BytesIO
+import os
+from werkzeug.utils import secure_filename
 
 
 
@@ -104,6 +106,7 @@ def ver_productos():
     search = request.args.get('search', '')
     filtros_marca = request.args.getlist('filter_marca')  # Filtros seleccionados por marca
     filtros_tipo = request.args.getlist('filter_tipo')  # Filtros seleccionados por tipo
+    filtro_estado = request.args.get('filter_estado', 'Disponible')  # Nuevo filtro por estado
     sort = request.args.get('sort', '')  # Parámetro de ordenación
 
     try:
@@ -120,10 +123,10 @@ def ver_productos():
             SELECT p.ID_Producto, p.Precio_Venta, p.Nombre_Producto, p.Descripcion, p.Estado, p.Stock, p.Tipo, m.Nombre_Marca
             FROM Producto p
             LEFT JOIN Marca m ON p.ID_Marca = m.ID_Marca
-            WHERE p.Estado = 'Disponible'
+            WHERE p.Estado = %s
         """
 
-        params = []
+        params = [filtro_estado]
         
         # Agregar condiciones de filtro por marca
         if filtros_marca:
@@ -161,11 +164,111 @@ def ver_productos():
             return render_template('productos/_productos.html', productos=productos)
         else:
             # Renderizar la página completa
-            return render_template('productos/ver_productos.html', productos=productos, marcas=marcas, tipos=tipos, selected_filters=filtros_marca + filtros_tipo)
+            return render_template('productos/ver_productos.html', productos=productos, marcas=marcas, tipos=tipos, selected_filters=filtros_marca + filtros_tipo, selected_estado=filtro_estado)
     except Exception as e:
         flash('Error al cargar los productos: {}'.format(e))
         return redirect(url_for('dashboard_menu'))
 
+
+@app.route('/agregar_producto', methods=['GET', 'POST'])
+@login_required
+def agregar_producto():
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        nombre_producto = request.form['nombre_producto']
+        precio_venta = request.form['precio_venta']
+        descripcion = request.form['descripcion']
+        stock = request.form['stock']
+        tipo = request.form.get('tipo')  # Tipo seleccionado
+        nuevo_tipo = request.form.get('tipo_nuevo')  # Nuevo tipo si se ingresa
+        marca_nombre = request.form.get('marca')  # Marca seleccionada
+        nuevo_marca = request.form.get('marca_nuevo')  # Nueva marca si se ingresa
+        imagen = request.files.get('imagen')  # Obtener la imagen
+
+        try:
+            cursor = conexion.connection.cursor()
+
+            # Manejar tipo:
+            if tipo == 'nuevo' and nuevo_tipo:
+                tipo = nuevo_tipo
+            else:
+                tipo = request.form.get('tipo')  # Obtener el tipo ya existente
+
+            # Manejar nueva marca
+            if marca_nombre == 'nuevo' and nuevo_marca:
+                cursor.execute("SELECT MAX(ID_Marca) FROM Marca")
+                max_id = cursor.fetchone()[0]
+                if max_id:
+                    new_id = int(max_id[1:]) + 1
+                    id_marca = f'M{new_id:02d}'
+                else:
+                    id_marca = 'M01'
+                
+                cursor.execute("INSERT INTO Marca (ID_Marca, Nombre_Marca) VALUES (%s, %s)", (id_marca, nuevo_marca))
+                conexion.connection.commit()
+                # Ahora obtenemos el ID de la nueva marca
+                marca_nombre = nuevo_marca
+                id_marca = id_marca
+                
+            else:
+                cursor.execute("SELECT ID_Marca FROM Marca WHERE Nombre_Marca = %s", (marca_nombre,))
+                id_marca = cursor.fetchone()[0]
+            
+            # Generar el ID del producto
+            cursor = conexion.connection.cursor()
+            cursor.execute("SELECT MAX(ID_Producto) FROM Producto")
+            max_id = cursor.fetchone()[0]
+            if max_id:
+                new_id = int(max_id[1:]) + 1
+                producto_id = f'P{new_id:02d}'
+            else:
+                producto_id = 'P01'
+
+            # Ruta para guardar la imagen
+            ruta_imagen = None
+            if imagen:
+                filename = secure_filename(imagen.filename)
+                basepath = os.path.dirname(__file__)
+                nuevo_nombre_imagen = f"{producto_id.replace(' ', '_')}.{filename.rsplit('.', 1)[-1]}"
+                ruta_imagen = os.path.join(basepath, 'static/imagenes/productos/', nuevo_nombre_imagen)
+                imagen.save(ruta_imagen)
+
+            # Insertar el nuevo producto
+            query = """
+                INSERT INTO Producto (ID_Producto, Nombre_Producto, Precio_Venta, Descripcion, Stock, Tipo, ID_Marca, Estado)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, 'Disponible')
+            """
+            cursor.execute(query, (producto_id, nombre_producto, precio_venta, descripcion, stock, tipo, id_marca))
+            
+            conexion.connection.commit()
+            cursor.close()
+
+            flash('Producto agregado exitosamente.')
+            print("termine la funcion")
+            return redirect(url_for('ver_productos'))
+
+        except Exception as e:
+            print("estoy en except")
+            flash(f'Error al agregar el producto: {e}')
+            return redirect(url_for('agregar_producto'))
+
+    # Si es una solicitud GET, mostrar el formulario
+    try:
+        cursor = conexion.connection.cursor()
+        cursor.execute("SELECT DISTINCT Nombre_Marca FROM Marca")
+        marcas = [row[0] for row in cursor.fetchall()]
+        cursor.execute("SELECT DISTINCT Tipo FROM Producto")
+        tipos = [row[0] for row in cursor.fetchall()]
+        cursor.close()
+        print("estoy en try")
+        return render_template('productos/agregar_producto.html', marcas=marcas, tipos=tipos)
+    except Exception as e:
+        print(f'Error al cargar los datos: {e}')
+        return redirect(url_for('ver_productos'))
+
+
+    
+    
 @app.route('/ver_detalle_producto/<string:id_producto>')
 def ver_detalle_producto(id_producto):
     try:

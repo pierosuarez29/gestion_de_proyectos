@@ -14,17 +14,18 @@
                 var query = $('#search').val();
                 var filtersMarca = [];
                 var filtersTipo = [];
+                var filterEstado = $('input[name="filter_estado"]:checked').val(); // Nuevo filtro por estado
                 
                 // Recoger filtros por marca
                 $('input[name="filter_marca"]:checked').each(function() {
                     filtersMarca.push($(this).val());
                 });
-
+            
                 // Recoger filtros por tipo
                 $('input[name="filter_tipo"]:checked').each(function() {
                     filtersTipo.push($(this).val());
                 });
-
+            
                 var sort = $('#sort').val();
                 $.ajax({
                     url: verProductosUrl,
@@ -33,6 +34,7 @@
                         search: query,
                         filter_marca: filtersMarca,
                         filter_tipo: filtersTipo,
+                        filter_estado: filterEstado, // Enviar el estado seleccionado
                         sort: sort
                     },
                     success: function(data) {
@@ -43,8 +45,7 @@
                         console.error('Error en la solicitud AJAX:', status, error);
                     }
                 });
-            }
-
+            }      
             function updateCarritoContador() {
                 $.ajax({
                     url: '{{ url_for("obtener_cantidad_carrito") }}', // Asegúrate de tener una ruta que devuelva la cantidad de productos en el carrito
@@ -100,6 +101,22 @@
                         </div>
                     {% endfor %}
                     </div>
+                    <!-- Filtros por Estado -->
+                    <h3>Estado:</h3>
+                    <div class="filtros-estado">
+                        <div class="filtro-item">
+                            <label>
+                                <input type="radio" name="filter_estado" value="Disponible" {% if selected_estado == 'Disponible' %}checked{% endif %}>
+                                Disponible
+                            </label>
+                        </div>
+                        <div class="filtro-item">
+                            <label>
+                                <input type="radio" name="filter_estado" value="No Disponible" {% if selected_estado == 'No Disponible' %}checked{% endif %}>
+                                No Disponible
+                            </label>
+                        </div>
+                    </div>
                     <div class="cajon-boton-aplicar">
                         <button type="submit" class="boton-aplicar">Aplicar filtros</button>
                     </div>
@@ -135,9 +152,12 @@
                 <div class="productos" id="productos">
                     {% include 'productos/_productos.html' %}
                 </div>
+                
+                <!-- Botón para añadir otro producto -->
+                <a href="{{ url_for('agregar_producto') }}" class="btn-agregar-producto">Añadir producto</a>
             </div>
         </div>
-
+        
         <a href="{{ url_for('dashboard_menu') }}" class="boton-regresar">Volver al Menú</a>
     </div>
     <script>

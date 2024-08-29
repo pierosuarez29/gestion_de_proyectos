@@ -16,7 +16,7 @@
     <div class="contenedor-detalle-producto">
         <div class="detalle-producto">
             <h1>{{ producto[2] }}</h1> <!-- Nombre del producto -->
-            <img src="{{ url_for('static', filename='imagenes/'+ producto[2]  +'.png') }}" alt="Imagen del Producto" class="detalle-imagen-producto">
+            <img src="{{ url_for('static', filename='imagenes/productos/'+ producto[0]  +'.png') }}" alt="Imagen del Producto" class="detalle-imagen-producto">
             
             <!-- Información del producto -->
             <form id="formEditarProducto" action="{{ url_for('editar_producto', id_producto=producto[0]) }}" method="post">

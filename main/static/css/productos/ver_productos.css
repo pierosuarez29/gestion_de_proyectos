@@ -362,3 +362,50 @@ input[type="number"] {
     display: none; /* Oculto por defecto */
 }
 
+/* Estilo para el botón de añadir producto */
+.btn-agregar-producto {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #4cae4c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    margin-top: 20px;
+}
+
+.btn-agregar-producto:hover {
+    background-color: #4cae4c;
+}
+
+/* Estilos generales para el formulario de agregar producto */
+.form-agregar-producto {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.form-agregar-producto label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+.input-agregar, .textarea-agregar, .select-agregar {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.textarea-agregar {
+    height: 100px;
+}

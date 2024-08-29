@@ -4,7 +4,7 @@
     
     <!-- Imagen clickeable que redirige a la página de detalles del producto -->
     <a href="{{ url_for('ver_detalle_producto', id_producto=producto[0]) }}">
-        <img src="{{ url_for('static', filename='imagenes/' + producto[2] + '.png') }}" class="icono-producto" alt="Icono">
+        <img src="{{ url_for('static', filename='imagenes/productos/' + producto[0] + '.png') }}" class="icono-producto" alt="Icono">
     </a>
     
     <p>Precio: S/. {{ producto[1] }}</p>
