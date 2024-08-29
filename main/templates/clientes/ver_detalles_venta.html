@@ -17,8 +17,37 @@
                     confirmButtonText: 'OK'
                 });
             }
+            if (urlParams.has('Pagado')) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Compra Pagada',
+                    text: 'El Pago ha sido procesado por el vendedor.',
+                    confirmButtonText: 'OK'
+                });
+            }
         });
     </script>
+    <style>
+                /* Estilos para el botón "Marcar como Pagado" */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #5cb85c; /* Color de fondo verde */
+            text-decoration: none;
+            border: none; /* Sin borde para un aspecto más limpio */
+            border-radius: 5px; /* Bordes redondeados */
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s; /* Transición suave para el cambio de color */
+        }
+
+        .btn:hover {
+            background-color: #4cae4c; /* Color de fondo verde más oscuro al pasar el ratón */
+        }
+
+    </style>
 </head>
 <body>
     <div class="container">
@@ -27,7 +56,12 @@
         <p><strong>Fecha:</strong> {{ venta[1] }}</p>
         <p><strong>Estado:</strong> {{ venta[2] }}</p>
         <p><strong>Total:</strong> S/ {{ venta[3] }}</p>
-        
+
+        <!-- Botones para cambiar el estado de la venta -->
+        <form action="{{ url_for('actualizar_estado_venta', venta_id=venta[0], nuevo_estado='Pagado', cliente_id=venta[5]) }}" method="post" style="display: inline;">
+            <button type="submit" class="btn">Marcar como Pagado</button>
+        </form>
+
         <h2>Productos Comprados</h2>
         <table>
             <thead>
@@ -49,12 +83,11 @@
                 {% endfor %}
             </tbody>
         </table>
+
         <!-- Enlace para regresar a las ventas del cliente -->
         <a href="{{ url_for('ver_ventas_cliente', id_cliente=venta[5]) }}" class="btn-regresar">Regresar a Ventas del Cliente</a>
         <!-- Botón para generar boleta en PDF -->
         <a href="{{ url_for('generar_boleta_pdf', venta_id=venta[0]) }}" class="btn-generar-boleta">Generar Boleta PDF</a>
-
-        
     </div>
 </body>
 </html>

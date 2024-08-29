@@ -705,6 +705,26 @@ def ver_detalles_venta(id_cliente,venta_id):
         print('Error al cargar los detalles de la venta: {}'.format(e))
         return redirect(url_for('ver_ventas_cliente', id_cliente=id_cliente))
 
+
+@app.route('/actualizar_estado_venta/<cliente_id>/<venta_id>/<nuevo_estado>', methods=['POST'])
+@login_required
+def actualizar_estado_venta(venta_id, nuevo_estado,cliente_id):
+    try:
+        cursor = conexion.connection.cursor()
+        cursor.execute('''
+            UPDATE Venta
+            SET Estado = %s
+            WHERE ID_Venta = %s
+        ''', (nuevo_estado, venta_id))
+        conexion.connection.commit()
+        cursor.close()
+        print("")
+        print('Estado de la venta actualizado correctamente', 'success')
+    except Exception as e:
+        print(f'Error al actualizar el estado de la venta: {e}')
+        print('Hubo un error al actualizar el estado de la venta', 'danger')
+    return redirect(url_for('ver_detalles_venta', id_cliente=cliente_id, venta_id=venta_id)+ '?Pagado=true')
+
 @app.route('/generar_boleta/<venta_id>', methods=['GET'])
 @login_required
 def generar_boleta_pdf(venta_id):
