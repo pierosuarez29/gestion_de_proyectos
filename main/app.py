@@ -962,7 +962,7 @@ def descargar_empleados_pdf():
         # Obtener la lista de empleados desde la base de datos
         cursor.execute('''
             SELECT DNI_Empleado, Nombres_Empleado, Apellidos_Empleado, Telefono_Empleado, Estado 
-            FROM Empleado
+            FROM Empleado WHERE Estado = 'Activo'
         ''')
         empleados = cursor.fetchall()
         
