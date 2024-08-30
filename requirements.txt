@@ -1,0 +1,6 @@
+Flask==2.3.3
+Flask-Login==0.6.3
+Flask-MySQLdb==1.0.1
+PyMySQL==1.0.3
+pdfkit==1.0.0
+Werkzeug==3.0.0
